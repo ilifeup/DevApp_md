@@ -2,7 +2,11 @@
 
 > A 階段：ChatGPT Plus／Claude Pro → GitHub Markdown。修改前請讀 [AGENTS.md](AGENTS.md)。
 
-## 最新執行決議（優先閱讀）
+## 2026-11-01 最新正式決議
+
+- [影音 Icon-only 最高原則與批次 F 全 10 模組核准](ChangeLog/2026-11-01_SharedModulesV1_批次F十模組核准與影音Icon最高原則.md)：適用 3 App，FAMILY 優先、SHOP 三 App 共用 WooCommerce、NOTIFY 沿用現有通知流程，簡單設計、不過度開發。
+
+## 最新執行決議（歷史交付指令）
 
 - [2026-11-01｜批次 1～2 修正封存交付指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_批次1至2修正封存交付指令.md)：**本次只交付已修正成果；不啟動批次 F／G。**
 
