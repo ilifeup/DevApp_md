@@ -85,7 +85,15 @@ r7.2 原始 HTML 的「技術與架構」「核心流程」「資料庫」「核
 - 下一批次必須先核對正式範圍、既有 ZIP 與 `docs/PROGRESS.md`，集中修正與測試，最後交付單一 ZIP；不得自行擴充、過度設計或擅自 Git Commit／PR／Merge。
 - [完整 Claude 下一批次執行指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_下一批次整合開發指令.md)。
 
-## 8. 待解決差異
+## 8. 本次執行範圍裁定（2026-11-01）
+
+- 使用者已明確選擇 Claude 提出的**方案 1：本次只交付修正**。MEDIA-01 錯誤串流清理及 A01～A15 修正由 Claude 回報已完成，但 DevApp_md **尚未取得 ZIP 與測試證據，不能標示已驗收**。
+- 本次只完成測試準備、證據整理、單一完整 ZIP、HTML、Page Atlas、`docs/PROGRESS.md`，然後停止等待 ChatGPT 審查。
+- **批次 F 不啟動**；`NOTIFY-02` 因 D4 待決、`SHOP-01` 因 EachCore 獨立交付邊界，不納入本次。其他 F 候選模組也不得自行開發。
+- **批次 G 不啟動**；Ubuntu 整合驗收待另行核准，缺少 PHP 8.4／MySQL／Flutter 測試環境者標 `BLOCKED` 或 `NOT RUN`。
+- 最新指令：[Claude 批次 1～2 修正封存交付](ChangeLog/2026-11-01_SharedModulesV1_Claude_批次1至2修正封存交付指令.md)。
+
+## 9. 待解決差異
 
 - 正式模組數量已由使用者確認為 **45**；原始 HTML 中「44」僅作為歷史來源保留，不再視為未決。
 - 原始 HTML 內有 r7.1 標頭文字但新增 10/31 決議 Tab；保留來源原文，不擅自修改版本字樣。

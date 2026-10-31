@@ -2,6 +2,10 @@
 
 > A 階段：ChatGPT Plus／Claude Pro → GitHub Markdown。修改前請讀 [AGENTS.md](AGENTS.md)。
 
+## 最新執行決議（優先閱讀）
+
+- [2026-11-01｜批次 1～2 修正封存交付指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_批次1至2修正封存交付指令.md)：**本次只交付已修正成果；不啟動批次 F／G。**
+
 ## 下一批次開發指令
 
 - [2026-11-01 Claude 下一批次整合開發指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_下一批次整合開發指令.md)：先清除錯誤設計、逐項核對 A01–A15，再一次完成下一核准批次。**指令存於 ChangeLog；審查結論另記入正式模組與追蹤檔。**
