@@ -1,44 +1,83 @@
-# PROJECT.md｜DevApp_md A 階段總計畫
+# PROJECT.md｜Shared Modules V1 專案計畫總覽（r7.2 匯入）
 
-> 狀態：A 階段文件架構已建立；MEDIA-01 內容待正式來源核對。  
-> 計畫依據：[DevApp_md v1.0 參考計畫](docs/reference/DevApp_md_v1.0.md)  
-> AI 操作規範：[AGENTS.md](AGENTS.md)
+> 來源：2026-10-31 r7.2 HTML（14 個 Tab、45 張模組卡）；**文件匯入不代表實作或驗收**。原始檔完整保留。此儲存庫只管理 Markdown 計畫書，與程式碼開發基線分離。
 
-## 1. 專案定位與目標
-以 GitHub Markdown 作為 App 開發需求、變更決議、實作及驗收證據的共同管理入口，供 ChatGPT Plus、Claude Pro 及其他 AI 使用。避免 AI 擅自新增功能、推翻既有決議或將開發回報誤認為已驗收。
+## 1. 專案目標與範圍
 
-## 2. A 階段範圍與不做的事
-**流程：** ChatGPT Plus／Claude Pro → 已授權 GitHub 工具或 API → GitHub Markdown。
+將 Shared Modules V1 的原始 r7.2 計畫書拆成可供 ChatGPT／Claude 迭代管理的文件。採用 [AGENTS.md](AGENTS.md) 的 C 模式；新來源先比較、正式業務規則修改須核准。
 
-本階段僅整理及維護文件；不啟動 PHP Cron、MySQL、Web、GitHub Actions、自訂 MCP Server 或自建 Agent；不將其他程式儲存庫的原始碼複製進來。
+## 2. 正式來源與閱讀優先順序
 
-## 3. 技術與文件架構
-- `AGENTS.md`：所有 AI 共用最高執行規則。
-- `README.md`：專案入口及文件索引。
-- `PROJECT.md`：總目標、範圍、架構、模組清單與路線。
-- `modules/<ID>.md`：每個模組唯一正式規格；未經核准不得改寫需求。
-- `changes/CHG-*.md`：來源差異、提案、決策及變更歷史。
-- `tracking/<ID>.md`：規格、實作、驗收三版本及 Feedback。
+1. [10/31 決議與 Claude 修正指令](changes/CHG-20261031-MEDIA-01.md)（在其適用範圍內優先於舊版衝突內容）。
+2. [r7.2 原始完整 HTML](docs/reference/Shared_Modules_V1_專案開發計畫書_r7.2_1031決議.html)（保留 14 Tab 與原文）。
+3. [r7.2 45 張模組卡拆分](modules/)（文字轉換版本；遇歧義回查 HTML）。
+4. [A 階段文件管理規劃](docs/reference/DevApp_md_v1.0.md)。
 
-Git Commit／Diff 負責文件歷史；需求版本與程式／測試版本仍獨立記錄。
+## 3. 技術架構、流程、資料庫及規則
 
-## 4. 模組索引與相依
-| 模組 | 正式規格 | 三版本追蹤 | 現況 |
-|---|---|---|---|
-| MEDIA-01（影音中心） | [modules/MEDIA-01.md](modules/MEDIA-01.md) | [tracking/MEDIA-01.md](tracking/MEDIA-01.md) | 已建待核對草案；尚非完整核准規格 |
+r7.2 原始 HTML 的「技術與架構」「核心流程」「資料庫」「核心設計規則」「Page Atlas」等內容仍保留在完整原始檔。這些跨模組內容**尚未逐項重構為正式共用規格**，不得誤以為單一模組卡已包含所有跨模組契約。先不複製到多份文件，以免產生不同步的規則。
 
-其餘模組待取得核准來源後逐批加入，不先建立空白檔。跨模組相依關係尚未取得可核對資料，不予推定。
+## 4. 模組索引（45 張原始卡）
 
-## 5. 開發里程碑
-- **P0 文件骨架**：AGENTS、README、PROJECT、MEDIA-01、tracking、首次變更紀錄。
-- **P1 MEDIA-01 試跑**：提供正式來源與新 Claude MD；核對需求 ID、差異、衝突、核准、Git Commit 與三版本證據。
-- **P2 擴充**：驗證流程穩定後再逐批納入其他模組。
+- [PA-01](modules/PA-01.md)
+- [CORE-01](modules/CORE-01.md)
+- [CORE-02](modules/CORE-02.md)
+- [CORE-03](modules/CORE-03.md)
+- [CORE-04](modules/CORE-04.md)
+- [CORE-05](modules/CORE-05.md)
+- [CORE-06](modules/CORE-06.md)
+- [NOTIFY-01](modules/NOTIFY-01.md)
+- [NOTIFY-02](modules/NOTIFY-02.md)
+- [ACCESS-01](modules/ACCESS-01.md)
+- [SHARE-01](modules/SHARE-01.md)
+- [LINK-01](modules/LINK-01.md)
+- [REF-01](modules/REF-01.md)
+- [CONTENT-01](modules/CONTENT-01.md)
+- [SEARCH-01](modules/SEARCH-01.md)
+- [MEDIA-01](modules/MEDIA-01.md)
+- [FILE-01](modules/FILE-01.md)
+- [TAG-01](modules/TAG-01.md)
+- [CATALOG-01](modules/CATALOG-01.md)
+- [VENUE-01](modules/VENUE-01.md)
+- [COURSE-01](modules/COURSE-01.md)
+- [EVENT-01](modules/EVENT-01.md)
+- [SERVICE-01](modules/SERVICE-01.md)
+- [BOOK-01](modules/BOOK-01.md)
+- [BOOK-02](modules/BOOK-02.md)
+- [BOOK-03](modules/BOOK-03.md)
+- [FAMILY-01](modules/FAMILY-01.md)
+- [PAY-01](modules/PAY-01.md)
+- [PAY-02](modules/PAY-02.md)
+- [PAYGATE-01](modules/PAYGATE-01.md)
+- [POINTS-01](modules/POINTS-01.md)
+- [ATTEND-01](modules/ATTEND-01.md)
+- [ATTEND-02](modules/ATTEND-02.md)
+- [MAKEUP-01](modules/MAKEUP-01.md)
+- [CAL-01](modules/CAL-01.md)
+- [CAL-02](modules/CAL-02.md)
+- [CERT-01](modules/CERT-01.md)
+- [FORM-01](modules/FORM-01.md)
+- [REPORT-01](modules/REPORT-01.md)
+- [MARKETING-01](modules/MARKETING-01.md)
+- [TAG-02](modules/TAG-02.md)
+- [ANALYTICS-01](modules/ANALYTICS-01.md)
+- [SCORE-01](modules/SCORE-01.md)
+- [REF-02](modules/REF-02.md)
+- [SHOP-01](modules/SHOP-01.md)
 
-## 6. 共用原則
-一模組一正式規格；變更提案與正式規格分離；C 模式審核；三版本獨立；不以 AI 回報或 CI 綠燈推定驗收；不重複抄寫模組規格。
+## 5. 開發狀態與驗收
 
-## 7. 待決策與風險
-- MEDIA-01 完整正式需求文件、核准版本與來源 Commit 尚待提供或查證。
-- MEDIA-01 的 API、DB、UI、驗收案例及程式 Commit 尚待來源確認。
-- 目前建立的模組檔案是**待核對草案**，不得當成已完成或已驗收。
-- 本次文件拆分記錄：[CHG-20261101-001](changes/CHG-20261101-001.md)。
+來源 HTML 表示第 1～4 批已有程式工作，但狀態為 **IMPLEMENTED / UNVERIFIED**。Pest、Migration、Flutter 分析／測試／建置、Android 實機等未驗收項目不得標為 PASS。DevApp_md 尚未獨立查驗程式庫及測試輸出。
+
+## 6. 開發路線
+
+- P0：完成 r7.2 來源封存、45 模組卡及 10/31 指令拆分。
+- P1：逐項核對 MEDIA-01 正式決議、需求 ID、程式證據與測試證據。
+- P2：核對跨模組規則、43+ 其他模組、來源版本與相依關係。
+- B 階段 PHP／MySQL／Web 不在本次工作範圍。
+
+## 7. 待解決差異
+
+- r7.2 同時出現「45 張模組卡」與「刪除 SYNC-01 後剩 44 個正式模組」等描述；保留 45 張來源卡，不自行刪除任何模組，待使用者核准正式清單。
+- 原始 HTML 內有 r7.1 標頭文字但新增 10/31 決議 Tab；保留來源原文，不擅自修改版本字樣。
+- 10/31 指令涉及移除未授權音訊串流；不得誤刪加密檔下載、影片連結或本機播放器 seek。

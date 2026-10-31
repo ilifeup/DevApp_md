@@ -1,29 +1,20 @@
-# DevApp_md｜AI App 專案計畫書管理
+# DevApp_md｜Shared Modules V1 AI 計畫書管理
 
-**目前：A 階段（ChatGPT Plus／Claude Pro → GitHub Markdown）**。本儲存庫管理需求規格、變更與三版本證據，不存放 App 程式碼，也不啟動 PHP／MySQL／Web／GitHub Actions。
+> A 階段：ChatGPT Plus／Claude Pro → GitHub Markdown。修改前請讀 [AGENTS.md](AGENTS.md)。
 
-## 文件入口
+## 專案入口
 
-| 文件 | 作用 |
-|---|---|
-| [AGENTS.md](AGENTS.md) | 所有 AI 的共同操作規範；修改前必讀 |
-| [PROJECT.md](PROJECT.md) | 專案目標、MVP、架構、路線圖、模組索引 |
-| [modules/MEDIA-01.md](modules/MEDIA-01.md) | MEDIA-01 需求規格；**目前為待核對草案，尚非完整正式核准規格** |
-| [tracking/MEDIA-01.md](tracking/MEDIA-01.md) | MEDIA-01 需求／實作／驗收三版本及證據 |
-| [changes/CHG-20261101-001.md](changes/CHG-20261101-001.md) | 本次拆分決議與變更歷史 |
-| [docs/reference/DevApp_md_v1.0.md](docs/reference/DevApp_md_v1.0.md) | 原始 A 階段架構計畫；保留作參考，不取代正式規格 |
+- [PROJECT.md](PROJECT.md)：專案總覽、45 模組索引、進度與待核對差異。
+- [modules/](modules/)：從 r7.2 HTML 拆分的 **45 張模組卡**；均標示待核對，不能當作已驗收。
+- [changes/CHG-20261031-MEDIA-01.md](changes/CHG-20261031-MEDIA-01.md)：10/31 決議與 Claude 整批修正指令。
+- [tracking/MEDIA-01.md](tracking/MEDIA-01.md)：需求、程式、測試三版本獨立追蹤。
+- [原始完整 HTML r7.2](docs/reference/Shared_Modules_V1_專案開發計畫書_r7.2_1031決議.html)：完整保留 14 Tab、45 卡、核心流程、DB、規則與 Page Atlas。
+- [Claude 指令原文](docs/reference/Shared_Modules_V1_1031決議_Claude整批修正指令_原文.md)：未改寫的原始來源。
+- [DevApp_md v1.0 參考計畫](docs/reference/DevApp_md_v1.0.md)：文件管理架構規劃。
 
-## AI 更新流程
+## 更新原則
 
-1. 先讀 `AGENTS.md`、`PROJECT.md`，再讀目標模組、追蹤及相關變更紀錄。
-2. 接收新 MD／開發報告／Commit，核對來源、需求 ID、版本與核准狀態。
-3. 先分類差異：`AUTO_APPLY`、`REVIEW_REQUIRED`、`CONFLICT`、`NO_CHANGE`。
-4. 有來源的一般進度可更新；新增／刪除功能、API、DB、權限、架構及正式規則變更須先經使用者核准。
-5. 規格、實作、驗收三版本分開；沒有證據不得標示完成。
-6. 只修改必要文件，集中 Commit，回報 SHA 與待決策事項。
-
-## 現階段界線
-
-MEDIA-01 目前只是用來驗證文件架構的第一個模組，正式需求、程式 Commit 及驗收資料尚待核對。其他模組在取得來源後逐批建立，不先產生空白檔案。
-
-**AI 任務指令：** 請先閱讀 AGENTS.md 與 PROJECT.md，再對照目標模組及追蹤檔；收到新 MD 先分析差異與衝突，重大變更等使用者核准，完成後回報實際 Commit。
+- 一個 AGENTS.md 管理所有 AI；一模組一份正式規格；新來源先比對，不擅自變更業務規則。
+- 三版本（需求／實作／驗收）分離；未經驗證不得標示完成。
+- 本次屬**來源匯入與文件拆分**，不是程式修正或正式驗收。
+- 原始 HTML 中的跨模組章節仍以原始檔保留；如拆分卡片有格式損失，回查原文。
