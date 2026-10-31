@@ -2,6 +2,11 @@
 
 > A 階段：ChatGPT Plus／Claude Pro → GitHub Markdown。修改前請讀 [AGENTS.md](AGENTS.md)。
 
+## 最新 P0 追加與 UI 規則
+
+- [TIPS-01 共用按鈕提示模組](modules/TIPS-01.md)：三 App、後台設定提示文字與秒數、Flutter 輕量提示元件。
+- [Icon 優先、文字其次、按鈕精簡；P0 TIPS-01 正式決議](ChangeLog/2026-11-01_SharedModulesV1_P0_TIPS01_影音Icon優先與提示模組.md)：最新規則，覆蓋過去絕對 Icon-only 的說法。
+
 ## 2026-11-01 最新正式決議
 
 - [影音 Icon-only 最高原則與批次 F 全 10 模組核准](ChangeLog/2026-11-01_SharedModulesV1_批次F十模組核准與影音Icon最高原則.md)：適用 3 App，FAMILY 優先、SHOP 三 App 共用 WooCommerce、NOTIFY 沿用現有通知流程，簡單設計、不過度開發。
