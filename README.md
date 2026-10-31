@@ -2,6 +2,12 @@
 
 > A 階段：ChatGPT Plus／Claude Pro → GitHub Markdown。修改前請讀 [AGENTS.md](AGENTS.md)。
 
+## 最新正式核准：47 模組、各 App 獨立 DB
+
+- [Claude 整批開發指令：TIPS、QA、影音 Icon、三 App 隔離](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)。
+- [QA-01 常見問題](modules/QA-01.md)；[TIPS-01 按鈕提示](modules/TIPS-01.md)：兩個 P0，均為各 App 獨立資料表。
+- 現行正式模組數 **47**，P0 **33**；下方 45／46 為歷史階段說明。
+
 ## 最新 P0 追加與 UI 規則
 
 - [TIPS-01 共用按鈕提示模組](modules/TIPS-01.md)：三 App、後台設定提示文字與秒數、Flutter 輕量提示元件。

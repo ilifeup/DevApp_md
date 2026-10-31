@@ -59,3 +59,9 @@
 - 最新規則為 **Icon 優先、文字其次、按鈕精簡**；取代第 7 節「全部只用 Icon」的過度嚴格表述。影音 UI 可見文字仍禁止「下載」。
 - 新增 **TIPS-01（P0）**：點擊共用提示 Icon 顯示數秒小文字框；Filament 管理各 App／按鈕提示與秒數。禁止做大型教學導覽平台。
 - [最新正式決議](ChangeLog/2026-11-01_SharedModulesV1_P0_TIPS01_影音Icon優先與提示模組.md) 優先於先前相衝突的 Icon-only 敘述。
+
+## 9. 最新正式規則：三 App 獨立 DB、Icon 設定、QA-01（2026-11-01）
+
+- **共用程式碼與 Migration，三 App 各自部署／各自 DB／各自 Filament 後台實例**；TIPS-01 的 `app_tips`、QA-01 的 `faqs` 均為每 App DB 各一表，**不加 app_id、不共用中央 DB**。
+- 影音操作 **Icon 優先、文字其次、按鈕精簡**；各 App 後台可從白名單更換 Icon ID，不允許任意 HTML/JS/SVG；影音 UI 可見文字仍禁止「下載」。
+- 新增 **QA-01（P0）** 極簡 FAQ，連同 TIPS-01（P0）使正式模組數為 **47，P0 33**。本節及[最新 Claude 指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)優先於第 7/8 節相衝突的舊描述。

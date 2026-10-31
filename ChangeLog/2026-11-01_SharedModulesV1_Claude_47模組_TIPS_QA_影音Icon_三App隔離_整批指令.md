@@ -1,0 +1,51 @@
+# Shared Modules V1｜Claude 整批開發指令｜47 模組・TIPS-01・QA-01・影音 Icon・三 App 隔離
+日期：2026-11-01｜狀態：使用者核准規格，**尚未實作／驗收**。
+
+## 0. 先讀、優先順序與禁止事項
+先讀 `AGENTS.md`、`PROJECT.md`、`modules/MEDIA-01.md`、`modules/TIPS-01.md`、`modules/QA-01.md`、本指令、10/31 決議、r7.3 修正報告與實際 ZIP。**最新使用者決議優先於歷史 r7.2/r7.3 文字。**
+嚴禁過度設計、重新實作已有功能、私自新增需求／套件／大型框架；不得操作正式資料庫或正式部署，不自動 Git Commit／PR／Merge。集中開發、集中測試、單一完整 ZIP 交付。
+
+## 1. 最重要的三 App 架構（更正舊錯）
+- **共用的是程式碼，不是同一個資料庫或同一個後台實例。** 共用 Laravel／Filament／Flutter 原始碼、Migration、Resource、UI 元件；Tiandi、Wuxiang、EachCore 各自部署、各自資料庫、各自後台登入與設定、各自業務資料。
+- TIPS-01：**每個 App 的 DB 各自一張 `app_tips`**；QA-01：**每個 App 的 DB 各自一張 `faqs`**。同一 Migration 分別在各 App DB 執行；**不建立中央共用 DB、不跨 App 查詢、不因隔離需求增加 `app_id` 欄位**。
+- 每個 App 的管理員只管理自己 App 的資料。CORE-04 模組開關在各自後台控制，停用不能破壞既有業務流程。
+- SHOP-01 三個 App 都可以選用 WooCommerce，但各自配置連線資訊；商品、庫存、訂單、付款、結帳權威仍在對應 WooCommerce，不另建交易系統。
+
+## 2. AV-UI-001｜影音介面最高原則（取代絕對 Icon-only）
+- **Icon 優先、文字其次、按鈕盡量少**：只顯示當前狀態必要操作，避免一排多餘按鈕；必要時允許短文字輔助，不能誤解成全部按鈕都必須無字。
+- **所有 App 影音介面可見字樣禁止「下載」二字**，包含操作、提示、通知與錯誤訊息；使用合法授權內容仍是獨立要求。
+- MEDIA-01 的 Icon **可由各 App 管理員在 Filament 選擇更換**：固定白名單 Icon ID（例如 play、pause、headphones、music、cloud、refresh、trash、help），Flutter 以內建 Icon ID → IconData 映射呈現；未知 ID 回退預設值。僅必要設定欄位，**沿用既有各 App settings／CORE-04 設定**，不新增 Icon 模組或專用資料表。
+- **不接受任意 HTML、JavaScript、SVG 原始碼、外部 Icon URL 或動態程式碼**；不做圖示編輯器、動畫設計器、主題平台。後台提供選單與簡單預覽即可。
+- 影音技術仍為完整加密檔取得、驗證、App 私有快取後才本機播放；不得恢復伺服器端解密串流或開放原始檔匯出。
+
+## 3. TIPS-01｜新增 P0｜按鈕小提示（極簡）
+- Flutter 共用提示元件：使用者**點提示 Icon**，於按鈕附近顯示短文字框，預設 4 秒、後台可設定 2～10 秒；自動消失，可手動關閉；不阻擋主要操作，不做全螢幕教學。
+- 各 App 的 Filament 後台：設定 `page_key`、`tip_key`、提示純文字、秒數、啟用／停用；可清單檢視及編輯。只顯示該 App 已知的按鈕 key；不可任意注入 HTML。
+- 各 App 自己 DB 的 `app_tips` 表：`id`, `page_key`, `tip_key`(唯一), `content`, `duration_seconds`, `enabled`, timestamps；**無 app_id**。
+- App 只讀取自己後端的啟用提示，沿用既有 API／快取機制；離線可用內建文案或快取，沒有設定時不影響功能。
+- 不做多步驟 coach mark、統計、AI 產生提示、觀看紀錄、A/B、複雜排程，不引入第三方教學套件。
+
+## 4. QA-01｜新增 P0｜App 常見問題（極簡）
+- 每個 App 前台有一個「常見問題」入口，顯示問題清單，點擊展開答案；無登入也可閱讀公開 FAQ（須遵守既有公開 API 與模組開關）。
+- 每個 App 的 Filament 後台管理員可新增、修改、刪除、排序、啟用／停用問題與答案。
+- 各 App 自己 DB 的 `faqs` 表：`id`, `question`, `answer`, `sort_order`, `is_active`, timestamps；純文字／換行，限制長度、輸入驗證與後台權限。API 僅提供啟用且排序後的列表。
+- 使用 CORE-04 既有模組開關；關閉時前台不顯示入口，API 按既有模組閘門拒絕。
+- 不做分類、搜尋、多語、AI 問答、回覆、評分、附件、複雜知識庫或第二套文章系統。
+
+## 5. 範圍與批次 F
+- 正式模組數 **47 = 原 45 + TIPS-01 + QA-01**；P0 **33**、P1 **10**、P2 **4**。r7.2/r7.3 歷史 HTML 原始檔保留 45 卡；下一版新計畫書應呈現 **47 卡**，不回頭覆寫歷史原文。
+- 已核准批次 F **全部 10 個模組**：FAMILY-01（優先沿用已有程式、補後台管理員模組開關）、VENUE-01、ATTEND-01、FORM-01、CERT-01、NOTIFY-02、SHOP-01、MARKETING-01、TAG-02、ANALYTICS-01。
+- **NOTIFY-02**：沿用 NOTIFY-01 事件／outbox → 推播工作 → FCM → 裝置，檢查去重、會員偏好、token 更新失效、重試與點擊導向；不建第二通知中心或大量群發平台。
+- **SHOP-01**：三 App 可開；各自 Filament 只需模組開關、WooCommerce 必要連線設定；不建第二套商品、訂單、金流權威。
+- 其他 F 模組只實作既有核准的 MVP，先檢查已有程式並補缺口，避免重寫。
+
+## 6. r7.3 修正驗收與新開發並行但分開追蹤
+- 10/31 MEDIA-01 刪串流與 A01～A15 已由 Claude 回報修改，**仍 IMPLEMENTED / UNVERIFIED**。先核對 ZIP、修正報告與實際行號；Pest、Migration 000021、Flutter analyze/test、Android 實機、雙程序並發，沒跑就標 `NOT RUN`／`BLOCKED`。
+- 特別驗證 webhook ID 雜湊唯一鍵與既有資料、Migration 回滾、授權鎖、離線檔原子替換、18 MiB 上限、API／Flutter 契約；不得操作正式 DB。
+- 修正 r7.3 文件中舊串流／50 MB 上限等過時說法，保留原始歷史文件不動。新計畫書、Page Atlas、模組清單、API、PROGRESS 必須一致。
+- 新增 TIPS-01、QA-01 與 Icon 設定時，驗證三 App 設定隔離、權限、API、UI、模組開關、停用行為、提示秒數與 FAQ 排序；沒有測試環境就明示阻塞。
+
+## 7. 集中交付與回報
+- 先盤點現有程式與規格差異，然後一次整批修改；只建立必要 Migration，不改正式 DB。不得以靜態檢查冒充整合測試。
+- 交付**單一完整 ZIP**、逐檔修改清單、每模組功能與測試證據、`docs/PROGRESS.md`、更新後 HTML（14 Tab／47 卡）、Page Atlas registry、API／Migration 說明及阻塞清單。
+- 每項分別標示 `IMPLEMENTED`、`PASS`、`FAIL`、`NOT RUN`、`BLOCKED`，最後停下交 ChatGPT 審查；不自動部署或提交程式 GitHub。

@@ -114,3 +114,10 @@ r7.2 原始 HTML 的「技術與架構」「核心流程」「資料庫」「核
 - 新增 [TIPS-01](modules/TIPS-01.md) P0 三 App 共用按鈕提示模組：按提示 Icon 顯示可設定秒數的小文字框，Filament 後台可按 App／頁面／按鈕設定。**原生 Flutter、單一獨立資料表、MVP**。
 - 正式模組數 **46（原 45 + TIPS-01）**；r7.2/r7.3 歷史來源仍為 45 卡，後續新版計畫書補上 TIPS-01。
 - [最新完整決議](ChangeLog/2026-11-01_SharedModulesV1_P0_TIPS01_影音Icon優先與提示模組.md)；原 10 模組 F 批次照原核准範圍開發，r7.3 驗收仍獨立進行。
+
+## 12. 最新正式核准：47 模組與三 App 資料隔離（2026-11-01）
+
+- **47 模組：P0 33／P1 10／P2 4**（原 45 + TIPS-01 + QA-01）。新增 [QA-01](modules/QA-01.md) 極簡 FAQ；[TIPS-01](modules/TIPS-01.md) 簡單按鈕提示。
+- 三 App **共用程式碼，不共用 DB**；各 App 的 DB 分別有 `app_tips`、`faqs`，各自 Filament 後台設定，不加 `app_id`。
+- MEDIA-01 Icon 可由各 App 後台從固定清單更換，沿用既有設定，不新增資料表或 Icon 模組；Icon 優先、文字其次、按鈕精簡。
+- 已核准 F 十模組照原範圍開發；r7.3 未驗收事項分開追蹤。最新執行指令：[47 模組整批指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)。**本節取代前面 45／46 模組與中央共用表的過時表述**。
