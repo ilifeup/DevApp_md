@@ -1,7 +1,7 @@
 ---
 module_id: MEDIA-01
-spec_version: r7.2-import
-spec_status: source_imported_pending_review
+spec_version: r7.2-plus-20261031-decision
+spec_status: approved_1031_overlay_with_legacy_source
 source: docs/reference/Shared_Modules_V1_專案開發計畫書_r7.2_1031決議.html
 updated_at: 2026-11-01
 ---
@@ -9,6 +9,17 @@ updated_at: 2026-11-01
 # MEDIA-01｜r7.2 原始模組卡拆分
 
 > **來源保真聲明：** 本檔從 r7.2 HTML 的對應模組卡轉出，尚未逐項核對正式核准來源；不得把匯入狀態視為程式已完成或驗收通過。HTML 原始版保留於 [參考檔](../docs/reference/Shared_Modules_V1_專案開發計畫書_r7.2_1031決議.html)。 **10/31 正式決議優先於舊的串流敘述，詳見下方連結。**
+
+## 已核准規格覆核（2026-11-01，優先於下方舊 r7.2 匯入敘述）
+
+- **唯一音樂流程：** 權限驗證 → 下載完整加密檔 → 驗證並寫入手機私有加密 Cache → 才能本機播放。未完成下載不可播放。
+- **禁止：** 伺服器解密音樂線上串流、線上播放 URL／路由／Flutter 按鈕、專用 4-slot Cache Lock、503 重試、HLS、串流 Range、邊下載邊播放。
+- **保留：** `media.cipher` 加密檔下載 URL、AES-256-GCM／X25519／Ed25519、裝置綁定、授權最長 365 天、密文 Cache、原子切換、本機 seek、影片連結及會員權限。
+- **上傳：** 管理員單曲上限 18 MiB（18,874,368 bytes），前後端驗證，超限不得建立正式檔案或資料。
+- **換鑰／併發：** 同裝置不得靜默換公鑰；沿用現有輪替欄位與 DB 鎖序，失敗保留舊有效密文與授權，不另建大型系統。
+- **執行依據：** [10/31 決議](../changes/CHG-20261031-MEDIA-01.md)；[下一批次指令](../ChangeLog/2026-11-01_SharedModulesV1_Claude_下一批次整合開發指令.md)。
+
+## 歷史 r7.2 匯入卡片（保留供比對，**其中串流、50 MB 等舊描述均已失效**）
 
 MEDIA-01影音中心 S10P0○未開始
 r7.1 實作（未驗收、非正式 DRM）
