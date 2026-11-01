@@ -224,3 +224,8 @@ docker exec -w /workspace \
 - 根因定位 `app/Jobs/SendPushNotification.php::renew()`：`UPDATE push_claimed_at=now()` 在同一秒內與既有值相同，MySQL changed rows 可回傳 0；原碼以 `update(...)===1` 判斷 lease 所有權，誤判為 lease lost，於第一個 token 前停止。
 - Round11 `shared_mvp_push_round11_20261102.patch` / ZIP：只修改正式 Job 的 `renew()`；先執行有條件更新，若受影響列為 0，對同一 `id + push_claim` 再查 `exists()`，只有仍持有相同 claim 才繼續。保留 lease owner 限制、不放寬其他條件；`php -l` 與本地 `git apply --check` PASS。注意 `UPDATE` 和 `exists()` 之間仍存在既有發送前租約競態窗口，需以 R05 實機測試確認。
 - **Round11 尚未 Ubuntu Pest 測試**。先跑 BatchFTest Push 三案例，若 PASS 再完整 Feature。
+
+### 2026-11-02 02:42｜Round11 Ubuntu Push targeted regression PASS
+- 使用者回傳 `mvp-push-round11-result-20261102-024241.zip`：`syntax_round11` PHP lint PASS；`push_round11` **3 passed / 0 failed / 21 assertions / 12.23s**。
+- NOTIFY-02、F03 stale claim、R05 lease takeover 三項全部通過，確認修正 `SendPushNotification::renew()` 同秒 no-op UPDATE 的誤判，未移除 claim 所有權檢查。
+- **尚未執行 Round11 後完整 Feature suite**；下一步執行 `php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never`，DB 限定 `shared_pest_test`，並打包結果。勿宣稱全案完成。
