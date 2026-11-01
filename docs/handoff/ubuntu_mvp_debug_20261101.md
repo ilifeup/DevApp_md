@@ -148,3 +148,10 @@ docker exec -w /workspace \
 - `PageAtlasTest.php` retire-only：`paDef()` 的元件及 DB refs 沒有 verified 標示，`ManifestValidator` 按規則產出 `unverified`，故未退休的第二頁應保持 `unverified`；修正錯誤預期，保留證據檢查。
 - **重要未解**：PageAtlas `DB::transaction` 中第二筆 CHECK 失敗後第一筆修改仍保留；必須檢查 MySQL 表引擎、交易連線及測試中的 DDL 隱含 commit。不得修改成允許部分寫入或跳過原子性測試。
 - 此批未經 Ubuntu PHP/Pest 回歸；不宣稱剩餘 17 項已減少。
+
+### 2026-11-02｜第五批增量 Patch（尚未 Ubuntu 實測）
+- `shared_mvp_debug_round5_20261102.patch`，以**已套用第四批的原始碼**為基線，修改 `backend/tests/Feature/BatchFTest.php`、`backend/tests/Feature/ModuleSwitchTest.php`；本地 `git apply --check` PASS。
+- SHOP 四個測試：引入 `bfShopReady()`，保留 `bfModule('shop','enabled')` 並設定測試 `modules.requirements.shop='configured'`；參照 GProfilesTest 已使用的同一部署要求鍵。正式 `ModuleRegistry::requirementMet` 不變，仍須 Ubuntu 驗證是否另有依賴條件。
+- ModuleSwitch 三個測試：引入 `disableContentDependents()`，使用 `ModuleRegistry::dependents('content', true)` 列出啟用中的直接依賴者，先經 `requestDisable` 再停用 content；不削弱生產的模組依賴安全。若存在多層依賴仍須實測檢查。
+- 第四批修正 F02 booking fixture 與 PageAtlas 未驗證狀態，尚未 Ubuntu 實測；PageAtlas batch rollback 原子性問題未修。
+- **基準仍為 145 PASS / 17 FAIL**，不能視為新批次通過。
