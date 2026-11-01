@@ -127,3 +127,9 @@ docker exec -w /workspace \
 - 根因已由原始碼確認：`BatchFTest.php` 的 `bfLiveEvent()` 建立開始於 `now()-10min` 的活動，之後才呼叫 `CreateBooking`，被 `CreateBooking` 的 `hasStarted()` 正確拒絕。
 - 產出 `shared_mvp_attendance_fixture_20261102.patch` / ZIP：只改 `backend/tests/Feature/BatchFTest.php`，新增 `bfBookForCheckin()` 先移到未來合法報名，再移回目前簽到窗口；兩處 ATTEND-01 測試使用此 helper。**未放寬正式報名截止邏輯**。
 - `git apply --check` PASS；未套用 Ubuntu、未跑 Pest。先前兩批 patch 也仍未實測，Feature baseline 124 PASS/36 FAIL。
+
+### 2026-11-02｜三批合併為單一整合 Patch
+- 產出 `shared_mvp_debug_consolidated_20261102.patch` 與 ZIP，涵蓋 11 個不同檔案（前批次重疊檔案合併計算）。在上傳的 418-file snapshot 上 `git apply --check` PASS；ZIP 含原始檔快照供核對。
+- 深入檢視 `SendPushNotification::handle`：先 claim、偏好/帳號過濾、逐裝置 renew lease、remember、finish，具防重送與失效裝置處理；仍須以實機測試釐清 0 sends，不能任意移除 lease 或權限檢查。
+- `Audit::record` 接受 nullable actor，Migration `2026_11_01_000008_create_notifications_settings_audit.php` 的 audit_events.actor_id nullable FK；故 CSV audit 的 0→null 修補符合既有 schema，但權限端點仍須另行驗證。
+- **尚未套用 Ubuntu／未執行 PHP/Pest**，baseline 124 PASS/36 FAIL。下階段仍須實機回歸，並處理 SHOP module requires/dependencies、Content module dependencies、PageAtlas source/manifest、Push fixture 等剩餘根因。
