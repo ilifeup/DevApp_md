@@ -107,3 +107,9 @@ docker exec -w /workspace \
 - 完整 Feature：**124 PASS／36 FAIL，502 assertions，63.14s**；相較舊輪 114 PASS／46 FAIL，淨改善10。不能稱整套 PASS。`BatchEPointsCalendarPaymentTest`、`MediaCenterTest`、`InvariantCheckerTest`、`LockScopeTest`、`ReviewFixesTest`、`TransactionRunnerTest` 等檔案在此次 Feature 輸出為 PASS。
 - Feature 額外失敗包括：Page Atlas（來源路徑 `mobile/lib/app.dart` 不存在、鎖/回滾/同步）、ACCESS posts visibility、Catalog 單場 reschedule 斷言與 service currency NULL、Content 留言/收藏、Booking `DueSource` enum 與字串比較、CatalogAccess 建立課程 fixture 驗證、Media 18MiB 邊界、GProfiles、ModuleSwitch。詳情依原始日誌；尚未逐項確認根因。
 - **下一步**：先讀取目前 Ubuntu 原始碼相關段落，按共同根因分組制定一次性修補；不得直接取消 gate、截止時間、FK 或 TestDatabaseGuard。修復後先目標測試再完整回歸；Concurrency 需另驗 Guard 後才可跑。
+
+## 2026-11-02｜213 PHP 原始碼＋Feature 日誌集中 Debug 靜態審查
+- 使用者提供 `shared-mvp-diagnostic-20261102(1).zip`（213 PHP 檔）與 `feature_20261102.log`；**Feature 124 PASS／36 FAIL，502 assertions**。已作跨層靜態審查，**未修改 Ubuntu 程式／未重跑測試**。
+- 分類：Page Atlas 來源驗證／交易測試；CatalogAccess `makeSeries(price=0)` 與 `CreateSeriesWithLessons` `price min:1`；BatchF `bfLiveEvent()` 已開始後仍建立 booking；Push lease、preferences、module gate；SHOP sync module gate；CSV `FormResource::exportCsv()` `(int) auth()->id()` 導致 actor_id=0 FK；ServiceSlot currency NULL；Content comments_enabled；Favorites placeholder；BookingFlow DueSource enum/string；ModuleSwitch TAG dependency；GProfiles dataset config boot；Media 18MiB error order；posts visibility；Reschedule error order。
+- 特別注意：上述部分為根因候選，需依缺失的 `routes/api.php`、Controllers、config、migrations、factories、Flutter 與實機驗證，不可逕稱全部已修。嚴禁為讓測試變綠而放寬 booking 截止、模組依賴、ACCESS、外鍵、Page Atlas source check、Push lease 或 DB Guard。
+- 下一輪優先**一次取得缺失的整套原始碼**，按跨層 API→Controller→Action→Model→DB→Response 和測試 fixtures 集中修正；目標回歸後完整 Pest/Concurrency/Flutter/Android 驗收。已有環境資訊勿要求使用者重查。
