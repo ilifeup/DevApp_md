@@ -173,3 +173,9 @@ docker exec -w /workspace \
 - `MediaStorageService::readAndValidate` 先判斷 filesize 大於 18,874,368 bytes，使用 `ApiException::validation(['file'=>['...18 MiB...']])` 拒絕，頂層例外訊息固定為「輸入資料有誤。」。原測試 `toThrow(ApiException::class, '18 MiB')` 因訊息位置錯誤失敗。
 - 改為 try/catch 檢查 `$e->status === 422` 與 `implode(' ', $e->fields['file'] ?? [])` 包含 `18 MiB`；保留無副作用斷言及恰好上限可接受的驗證；正式媒體程式不變。
 - 尚未 Ubuntu 實測；基準仍為 145 PASS / 17 FAIL。下一步查 Push/ACCESS-01，並整合第 4–8 批成單一 Ubuntu patch，避免重複套用。
+
+### 2026-11-02｜第四至第八批合併補丁與 Push 追查
+- 已產出 `shared_mvp_debug_round4to8_merged_20261102.zip`（含同名 `.patch`）；基線為 Ubuntu 已套用前三批整合版，涵蓋 4–8 批。從 round8 檔案樹反向撤銷 8→4，再以檔案差異建立單一 patch；對未套用 4–8 的基線 `git apply --check` PASS。
+- Push 失敗 NOTIFY-02/F03/R05 均有 `handle()` 未呼叫 sender/未拋預期錯誤現象；初查 `SendPushNotification::handle` 於 claim 後會因 User active/family 或 PushPreferences 禁止而直接 finish；UserFactory verified() 明確設 active=true/family=false，故不宜猜測改掉權限。需檢查實際 `push.categories` / `push.template_categories`、notification model cast/DB 值及測試設定，勿破壞 lease/retry 語義。
+- ACCESS-01 的 BatchAPlatform 測試預期 guest 列表包含 public post，但實測為空；需釐清頁面 access rule/帖子條件與 fixture，未修改生產存取策略。
+- **尚未 Ubuntu 回歸第四至第八批**，基準仍 145 PASS/17 FAIL；待確認其餘 Push/ACCESS 問題後再做下一輪整合與實測。
