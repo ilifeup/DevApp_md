@@ -1,15 +1,41 @@
-# 新對話接手｜Ubuntu Shared Modules V1 MVP
+# 新對話接手｜Shared Modules V1 MVP（先讀懂，禁止直接開發）
 
-直接接手 Ubuntu 本機 Shared Modules V1 MVP 的 Laravel/Pest Debug。**先讀**：
+> 此文件是新 AI 的**第一個閱讀入口**。本次接手第一階段只有閱讀、比對、彙整與回報；使用者確認之前**不得修改程式、文件、Docker、資料庫、PR 或 CI**。
 
-1. [共用 AI 規則](../../AGENTS.md) 與 [專案總覽](../../PROJECT.md)。
-2. [Ubuntu 固定環境](../environment/ubuntu_shared_modules_mvp.md)。
-3. [Pest DB 安全](../testing/pest_database_safety.md)。
-4. [最新 Debug 狀態及 11 Fail](ubuntu_mvp_debug_20261101.md)。
-5. 相關 [modules/](../../modules/) 與 [ChangeLog/](../../ChangeLog/) 最新正式決議，先核對，不以舊 r7.2 覆蓋。
+## 1. 先完整閱讀（不可只看摘要）
+1. [本庫 AGENTS.md](../../AGENTS.md)（文件權威、AI 行為規則）與 [README.md](../../README.md)。
+2. [PROJECT.md](../../PROJECT.md)（最終專案目標、三 App 共用架構、階段界線）。
+3. [正式模組規格](../../modules/)：依當前專案需求檢查，特別是 BOOK、ATTEND、NOTIFY、FORM、MEDIA、SHOP、CATALOG。
+4. [最新核准決議 ChangeLog](../../ChangeLog/) 與 [changes/](../../changes/)；注意 2026-11-01 更新 **47 模組／P0 33／P1 10／P2 4**、TIPS-01、QA-01、三 App DB 隔離、MEDIA UI。
+5. [原計畫 r7.2 來源](../reference/Shared_Modules_V1_專案開發計畫書_r7.2_1031決議.html)（歷史來源；衝突以最新核准決議為準）。
+6. [Ubuntu 固定環境](../environment/ubuntu_shared_modules_mvp.md)（不用重複詢問已知版本、路徑、Docker）。
+7. [Pest 測試安全](../testing/pest_database_safety.md)（必須保護 shared_pest_test）。
+8. **[已知錯誤、根因與防止重犯](../testing/KNOWN_ISSUES_AND_PREVENTION.md)**（每次遇到相同症狀先查，已修問題不得從頭重做）。
+9. [Ubuntu 實機 Debug 進度](ubuntu_mvp_debug_20261101.md)（最新 BatchF 20 PASS／11 FAIL）。
+10. 本庫 [tracking/](../../tracking/) 以需求規格、程式實作、測試驗收三版本分開表示；未驗收不能標完成。
 
-本機 backend：`/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1/backend`；PHP 容器 `eachcore-dev-php-1`。Pest 專用 DB **`shared_pest_test`**；**`shared_mvp_test` 不可跑 Pest**。保留 TestDatabaseGuard、iStudy 完全不動。
+> 本 GitHub 分支 `docs/ubuntu-mvp-handoff-20261101` 保存以上新增交接文件；其他正式文件以該分支所繼承的原有資料及最新正式核准決議為準。DevApp_md **只管理文件，不是 Ubuntu MVP 程式碼本體**。
 
-最新實測：Unit **43/43 PASS**、Schema **91/91 PASS**、BatchF **20 PASS / 11 FAIL**；完整 Feature 在最新改碼後 **NOT RUN**；Concurrency **NOT RUN**。
+## 2. 閱讀完成，先向使用者提交「專案理解報告」
+請分章回報，並區分【文件確認】【實機證據】【推論／待驗證】：
 
-下一步：以本機最新 MVP 源碼為準，集中調查 BatchF 11 個失敗，不要重複詢問已寫入文件的固定環境；然後安全地重跑 Unit → Schema → Feature，確認 Guard 才跑 Concurrency。修改前備份；不得為測試綠燈放寬業務、安全與資料庫規則。**DevApp_md 是文件庫，不是程式碼庫。**
+1. **專案最終目標**：Shared Modules 要解決什麼問題、三個 App 如何共用程式與獨立部署，MVP 範圍、47 模組優先級。
+2. **架構與核心業務**：Flutter、Laravel 13、Filament、MySQL、API、會員、預約、候補、付款、簽到、媒體、權限與 Page Atlas 的關係。
+3. **正式規則與決策優先順序**：各模組規格、最新 2026-11-01 決議、禁止自行擴展的邊界，衝突要列出。
+4. **Ubuntu 本機環境**：Docker / Compose / PHP / MySQL / Composer / Laravel / Pest / Flutter 版本、兩份源碼位置、掛載與資料庫用途、iStudy 隔離。
+5. **目前進度與證據**：25 migrations PASS；Unit 43 PASS；Schema 91 PASS；BatchF 20 PASS／11 FAIL；歷史 Feature 114 PASS／46 FAIL（不是當前狀態）；Concurrency NOT RUN；Flutter 未驗證。
+6. **已知錯誤與防重犯**：先說明已解決的關鍵根因（DB/Guard、Forms scope、Query Builder whereKey 等），再分類 11 Fail 及完整 Feature 其他待查。指出禁止使用的假修復。
+7. **後續驗收策略（只提出方案）**：一次集中查根因、修復與回歸的順序；未知點只指出真正會影響正確性者。
+8. **理解的限制與矛盾**：哪些只有 TXT 時序證據、哪些後續日誌已取代、哪些需要本機再次確認；不得虛報已讀未讀內容。
+
+## 3. 第一階段禁止操作
+- 不得直接 Debug、生成補丁、執行命令、修改任何程式或 GitHub 文件。
+- 不得刪除 DB、跳過 TestDatabaseGuard、碰 iStudy、停用安全規則或猜測正式需求。
+- 不得自動提交 Commit／PR／Merge／部署／新增工具。
+- 完成上述報告後**停止並等待使用者核對**，得到下一步明確要求再操作。
+
+## 4. 第二階段開發的預備資訊（先記住，尚不得操作）
+- 本機 backend：`/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1/backend`。
+- PHP 容器：`eachcore-dev-php-1`；Pest 唯一 DB：`shared_pest_test`；`shared_mvp_test` 只是驗收 DB，不能做 Pest。
+- GitHub 舊 PoC `/home/media/GitDev/ShareModules` 和本機 ZIP MVP 不是相同程式基線，禁止直接覆蓋。
+- 未獲得後續授權前不修改任何東西。
