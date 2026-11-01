@@ -39,3 +39,10 @@
 - PHP 容器：`eachcore-dev-php-1`；Pest 唯一 DB：`shared_pest_test`；`shared_mvp_test` 只是驗收 DB，不能做 Pest。
 - GitHub 舊 PoC `/home/media/GitDev/ShareModules` 和本機 ZIP MVP 不是相同程式基線，禁止直接覆蓋。
 - 未獲得後續授權前不修改任何東西。
+
+## 2026-11-02 交接必讀：最新回歸與排錯知識
+1. [完整 Debug 根因索引／AI 防重犯手冊](../testing/DEBUG_PLAYBOOK_20261102.md)：Round1–11 根因、測試陷阱、不可重犯清單。
+2. [Ubuntu 2026-11-02 已驗證環境](../environment/UBUNTU_MVP_VERIFIED_20261102.md)：版本、路徑、容器、DB Guard、備份、測試指令。
+3. [已知錯誤舊索引](../testing/KNOWN_ISSUES_AND_PREVENTION.md) 與 [歷史 Debug 交接](ubuntu_mvp_debug_20261101.md) 仍保留；早期 FAIL 數字不是最新結果。
+4. **最新完整後端 Feature 162 PASS／0 FAIL、691 assertions、46.70 秒**，證據 `mvp-feature-final-round11-20261102-024503.zip`。Round11 後 Unit、Schema、Concurrency、Flutter、真實外部服務、部署仍未在本輪驗證。
+5. GitHub `DevApp_md` 只記錄文件；Ubuntu ZIP 工作樹不等於 GitHub 已同步程式。首次接手仍依本文件要求**先完整閱讀與回報，不自行修改**。
