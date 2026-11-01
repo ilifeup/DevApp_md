@@ -200,3 +200,10 @@ docker exec -w /workspace \
 - SHOP-01：`WooCatalogSync::readAll` 在沒有分頁標頭時不能以短頁證明完整，第二次讀取會耗盡 fake sequence 導致 `seen=0`；兩次模擬回應補上各自一致的 `X-WP-Total` 和 `X-WP-TotalPages`，不放寬正式同步的分頁驗證。
 - Push：NOTIFY-02 加入執行前條件斷言（active、非 family、read_at null、preferences allow、兩筆有效 token）以定位早退根因；F03/R05 仍需同類根因追查，不改正式 claim/lease/renew 安全機制。
 - **尚未 Ubuntu 實測**，基準仍 **157 PASS/5 FAIL**。本批需套用在第 1–8 批已套用後的版本，勿重套前三批。
+
+### 2026-11-02｜第九批增量修補（5 FAIL 的安全修正與 Push 診斷）
+- 產出 `shared_mvp_debug_round9_20261102.zip`（內含 `.patch`），基線為 Ubuntu 已套用前 3 批＋4–8 合併補丁的工作樹。本地在 round8 基線 `git apply --check` PASS。僅改 `BatchAPlatformTest.php`、`BatchFTest.php`，不修改正式程式。
+- ACCESS-01：`Post::scopePublished` 必須 `status` 為 `scheduled/published` 且 `published_at<=now`；原測試只給 published_at，資料表預設 draft。兩筆測試文章加 `status='published'`，維持公開／會員 ACL 驗證。
+- SHOP-01：原測試 `Http::sequence` 兩次均無分頁 header；同步程序要求完成證據，回應耗盡可能導致 seen=0。補 `X-WP-Total`、`X-WP-TotalPages` 與每次 sync 的實際商品數一致，保留 F01 防不完整分頁取消發布規則。
+- Push：NOTIFY-02 在 `handle` 前新增 `is_active=true`、`is_family_user=false`、`read_at=null`、`PushPreferences::allows=true`、有效裝置數=2 的斷言，協助找出提前結束的共同根因；F03/R05 尚未直接修改，仍可能失敗。不得將此補丁宣稱為 Push 修復。
+- **尚未 Ubuntu 實測**，最新完整基準 157 PASS / 5 FAIL。請 Ubuntu 先做 `git apply --check`、備份、套用、執行 `php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never`，上傳 log，再決定 Push 正式修正。
