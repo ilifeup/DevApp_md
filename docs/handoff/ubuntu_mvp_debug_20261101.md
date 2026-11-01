@@ -213,3 +213,8 @@ docker exec -w /workspace \
 - 剩餘：NOTIFY-02 送出 0 vs 2 (`BatchFTest.php:309`)；F03 stale lease 未拋 RuntimeException (`:416`)；R05 token log `[]` vs `['tok-1']` (`:530`)。NOTIFY-02 前置檢查 active、非 family、read_at null、preferences allow、有效 tokens=2 全 PASS。
 - 靜態碼分析 `SendPushNotification::handle()` 使用 `DeviceToken::...->limit((int) config('push.max_tokens_per_user', 10))->get()`；三項共同未進入 `FcmSender::send`，須在 Ubuntu 實際載入設定檢查 `push.max_tokens_per_user` 是否為 0，並檢查 `pushed_at`/claim 狀態。**尚未確認根因，勿直接放寬 lease 或偏好安全檢查。**
 - 下次完整 Feature 的預期尚待實測，不能把 targeted 38/3 當完整回歸。
+
+### 2026-11-02｜Round10 Push diagnostics only（未實機測試）
+- 已確認 Ubuntu `APP_ENV=testing`、DB `shared_pest_test`、`push.max_tokens_per_user=10`，設定快取不存在。先前 `max_tokens_per_user=0` 假設已排除；`push.claim_ttl_seconds`、`push.max_attempts` 為 null，但 Job 使用 class constants `CLAIM_TTL_SECONDS=600`、`MAX_ATTEMPTS=10`，不可擅自更改。
+- 建立 `shared_mvp_push_diagnostic_round10_20261102.patch`/ZIP：僅改 `backend/tests/Feature/BatchFTest.php`，增加 `bfPushDiagnostic()` 輸出不含裝置 token/密鑰的通知狀態、claim、attempts、偏好、有效 token 數；在 NOTIFY-02 和 R05 斷言失敗時附上診斷資訊，F03 驗證 stale lease 先決條件。
+- 本地 `git apply --check` PASS，**未在 Ubuntu 執行**；不改正式 Push Job、lease、資料庫或設定。下一步只跑 `BatchFTest.php`，觀察 3 個失敗詳細狀態。
