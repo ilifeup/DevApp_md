@@ -92,3 +92,8 @@
 
 ## E. 更新本檔的結案門檻
 將一項 OPEN 改為 FIXED 必須附：修正檔案、具體原因、相應測試名稱、實機 PASS 時間；完整回歸未通過仍應註記 regression pending。**CI 綠燈與 AI 宣稱成功都不能代替實機業務驗收。**
+
+## 2026-11-02 最新排錯索引（優先閱讀）
+- **[DEBUG_PLAYBOOK_20261102.md](DEBUG_PLAYBOOK_20261102.md)**：22 類症狀→根因→正確處理→禁止捷徑，涵蓋 Round1–11、Push MySQL 同秒租約更新、Woo 分頁、Page Atlas 隱含提交、媒體 OOM、測試 fixture 與 TestDatabaseGuard。
+- **[UBUNTU_MVP_VERIFIED_20261102.md](../environment/UBUNTU_MVP_VERIFIED_20261102.md)**：已驗證環境、容器／DB、備份與回歸命令。
+- **最新 Feature 實測 162 PASS／0 FAIL、691 assertions、46.70 秒**（Round11）。本檔早期 OPEN/VERIFY 條目是歷史排查紀錄，遇到同名問題時先查上述新索引和 Ubuntu 目前程式，不能直接當成仍失敗。Feature 全綠不代表 Concurrency／Flutter／外部整合／正式部署已驗收；不因綠燈自動結案。
