@@ -185,3 +185,11 @@ docker exec -w /workspace \
 - 已執行的 BatchBCatalog、BatchCContentGrowth 全部 PASS；BatchF ATTEND/F02 PASS，NOTIFY-02、SHOP-01、F03、R05 仍 FAIL；BatchAPlatform ACCESS-01 仍 FAIL。
 - **完整 Pest 未跑完**：在 `app/Services/Media/MediaKeyring.php:122` `openssl_encrypt`，PHP Fatal `Allowed memory size of 134217728 bytes exhausted (tried to allocate 18878464 bytes)`；不得把此輪當成完整 PASS/FAIL 統計，也不能認定媒體加密程式失效。
 - 下一步僅重跑完整 Feature，`php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never`，仍使用 `APP_ENV=testing DB_DATABASE=shared_pest_test DB_TEST_EXPECTED_DATABASE=shared_pest_test`，不修改正式 php.ini 或 DB。取得完整日誌再排查 Push/SHOP/ACCESS/ModuleSwitch/PageAtlas。
+
+### 2026-11-02 02:28｜512MiB 完整回歸結果：157 PASS / 5 FAIL
+- 實機 `feature_512m_20261102-022850.log`：**157 passed, 5 failed, 654 assertions, 49.40s**，無 PHP OOM。前次完整 145/17，最初 124/36；總失敗由 36 減至 5。
+- 剩餘五項：`BatchAPlatformTest` ACCESS-01 訪客 public post list 期望 `[id]` 實際 `[]`（line 115）；`BatchFTest` NOTIFY-02 send count 0 vs 2（line 303）；SHOP-01 `sync()` seen 0 vs 2（line 323）；F03 stale claim 未拋 RuntimeException（line 409）；R05 lease takeover token log 空 vs tok-1（line 523）。
+- ModuleSwitch、PageAtlas（含 batch rollback）、BatchB、BatchC、Decision1031（18MiB）、F02 全部 PASS。
+- SHOP 根因線索：`WooCatalogSync::readAll()` 對缺少 X-WP-Total headers 的短頁不視為完成，須再讀到空頁確認；SHOP-01 `Http::sequence()` 僅提供兩個非空 response，可能在第三頁失敗而使 `sync()` 回報 seen=0；應與 F01 已通過的測試對照，不可放寬正式分頁一致性。
+- Push 三項均無 sender 觸發，優先檢查 `PushPreferences::allows`、通知 `claim` 早退、User active/family；不刪除 lease 保護。ACCESS 需檢查 seed 的 page rule、Post visibility 與列表查詢。
+- 尚未產出第九批修補；須先定位根因再修復，不能宣稱 5 項已通過。
