@@ -46,3 +46,12 @@
 3. [已知錯誤舊索引](../testing/KNOWN_ISSUES_AND_PREVENTION.md) 與 [歷史 Debug 交接](ubuntu_mvp_debug_20261101.md) 仍保留；早期 FAIL 數字不是最新結果。
 4. **最新完整後端 Feature 162 PASS／0 FAIL、691 assertions、46.70 秒**，證據 `mvp-feature-final-round11-20261102-024503.zip`。Round11 後 Unit、Schema、Concurrency、Flutter、真實外部服務、部署仍未在本輪驗證。
 5. GitHub `DevApp_md` 只記錄文件；Ubuntu ZIP 工作樹不等於 GitHub 已同步程式。首次接手仍依本文件要求**先完整閱讀與回報，不自行修改**。
+
+
+## 2026-11-02 最新 Claude Code / App-T 路線（本節優先於歷史狀態）
+
+- **先讀：[Ubuntu Claude Code 環境實測、Round11 現況與 App-T 八階段路線](UBUNTU_CLAUDE_APP_T_ROADMAP_20261102.md)**。文件已記錄獨立審查帳號、Claude Pro 登入、MVP 專案唯讀、MySQL 專用測試帳號、不得操作 iStudy，以及下一階段 Claude Code 主力工作分配。
+- **最新 Feature：162 PASS／0 FAIL、691 assertions、46.70 秒**；早期 BatchF 20／11 與 Feature 114／46、124／36、145／17、157／5 均是歷史節點，不是目前總狀態。Unit 43 PASS、Schema 91 PASS 屬前次基線；Round11 最終版待重跑；Concurrency、Flutter、Android/iOS、完整 E2E 尚未驗收。
+- **最新規劃為 47 模組（P0 33／P1 10／P2 4）**；三 App 共用程式碼、各自 DB 與 Filament；優先完成 App-T 一套完整流程。
+- 最新 MVP 實際 Flutter 路徑為 `mobile/`；MVP ZIP 解壓工作樹非 Git repo，不得拿舊 PoC Git 當已驗證 Round11 基線。
+- 尚未同意自動 Git Commit／PR／Merge、正式部署或上架；不得操作 iStudy、Docker Compose、非測試 DB。
