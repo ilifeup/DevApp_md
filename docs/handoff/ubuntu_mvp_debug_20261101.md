@@ -207,3 +207,9 @@ docker exec -w /workspace \
 - SHOP-01：原測試 `Http::sequence` 兩次均無分頁 header；同步程序要求完成證據，回應耗盡可能導致 seen=0。補 `X-WP-Total`、`X-WP-TotalPages` 與每次 sync 的實際商品數一致，保留 F01 防不完整分頁取消發布規則。
 - Push：NOTIFY-02 在 `handle` 前新增 `is_active=true`、`is_family_user=false`、`read_at=null`、`PushPreferences::allows=true`、有效裝置數=2 的斷言，協助找出提前結束的共同根因；F03/R05 尚未直接修改，仍可能失敗。不得將此補丁宣稱為 Push 修復。
 - **尚未 Ubuntu 實測**，最新完整基準 157 PASS / 5 FAIL。請 Ubuntu 先做 `git apply --check`、備份、套用、執行 `php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never`，上傳 log，再決定 Push 正式修正。
+
+### 2026-11-02 02:33｜Round9 Ubuntu targeted regression：38 PASS / 3 FAIL
+- 上傳 `mvp-debug-round9-result-20261102-023357.zip`：`BatchAPlatformTest` 全部 PASS；`BatchFTest` SHOP-01 PASS；兩個 PHP syntax PASS；合計 **38 PASS、3 FAIL、204 assertions、18.57s**。
+- 剩餘：NOTIFY-02 送出 0 vs 2 (`BatchFTest.php:309`)；F03 stale lease 未拋 RuntimeException (`:416`)；R05 token log `[]` vs `['tok-1']` (`:530`)。NOTIFY-02 前置檢查 active、非 family、read_at null、preferences allow、有效 tokens=2 全 PASS。
+- 靜態碼分析 `SendPushNotification::handle()` 使用 `DeviceToken::...->limit((int) config('push.max_tokens_per_user', 10))->get()`；三項共同未進入 `FcmSender::send`，須在 Ubuntu 實際載入設定檢查 `push.max_tokens_per_user` 是否為 0，並檢查 `pushed_at`/claim 狀態。**尚未確認根因，勿直接放寬 lease 或偏好安全檢查。**
+- 下次完整 Feature 的預期尚待實測，不能把 targeted 38/3 當完整回歸。
