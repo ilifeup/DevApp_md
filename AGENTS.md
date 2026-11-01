@@ -67,7 +67,7 @@
 - 新增 **QA-01（P0）** 極簡 FAQ，連同 TIPS-01（P0）使正式模組數為 **47，P0 33**。本節及[最新 Claude 指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)優先於第 7/8 節相衝突的舊描述。
 
 ## 10. Repository confidentiality and terminology rule (2026-11-02, user approved)
-- Forbidden exact Chinese terms: `天帝教`, `無相`, `無相氣學`. Do not include them in repo text, filenames, comments, documentation, fixtures, commits, issues, PR descriptions, or generated outputs.
+- Forbidden exact Chinese terms: `U+5929 U+5E1D U+6559`, `U+7121 U+76F8`, `U+7121 U+76F8 U+6C23 U+5B78`. Do not include them in repo text, filenames, comments, documentation, fixtures, commits, issues, PR descriptions, or generated outputs.
 - Use neutral English identifiers `App-T`, `App-W`, `Tiandi`, `Wuxiang` or opaque module IDs where necessary. SHA-256 is not encryption and does not guarantee secrecy of guessable names.
 - Before commit, scan all tracked files and filenames with Unicode NFC normalization; redact prohibited names without changing API/DB contracts. If contract changes are required, stop and seek approval.
 - Do not expose the original restricted terms in scan logs. Removing current text does not erase Git history, caches, forks or clones; rewriting history requires separate approval.
