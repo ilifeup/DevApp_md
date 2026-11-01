@@ -155,3 +155,9 @@ docker exec -w /workspace \
 - ModuleSwitch 三個測試：引入 `disableContentDependents()`，使用 `ModuleRegistry::dependents('content', true)` 列出啟用中的直接依賴者，先經 `requestDisable` 再停用 content；不削弱生產的模組依賴安全。若存在多層依賴仍須實測檢查。
 - 第四批修正 F02 booking fixture 與 PageAtlas 未驗證狀態，尚未 Ubuntu 實測；PageAtlas batch rollback 原子性問題未修。
 - **基準仍為 145 PASS / 17 FAIL**，不能視為新批次通過。
+
+### 2026-11-02｜第六批增量 Patch：PageAtlas 回滾測試根因
+- `shared_mvp_debug_round6_20261102.patch`，基線為第四＋第五批均套用後的原始碼，僅修改 `backend/tests/Feature/PageAtlasTest.php`，本地反向 `git apply --reverse --check` PASS。
+- 根因：測試於 Laravel `RefreshDatabase` 的交易內執行 `ALTER TABLE ui_pages ADD CONSTRAINT`，MySQL DDL 隱含提交，破壞測試交易邊界，導致第一筆更新沒有回滾；不能據此認定正式 `PageAtlasSync` 的 `DB::transaction` 失效。
+- 改用隔離的 Eloquent model event dispatcher，在第二筆 `UiPage::saving` 時拋出例外；保留第一筆更新後第二筆失敗的完整 rollback 斷言；`finally` 恢復原 dispatcher，不動 schema、不改 production 程式。
+- 尚未 Ubuntu 實測；仍需 Pest 回歸驗證；基準 145 PASS/17 FAIL。
