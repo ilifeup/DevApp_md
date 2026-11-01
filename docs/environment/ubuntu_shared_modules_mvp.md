@@ -47,3 +47,11 @@
 - 先前有**未來規劃刪除** `shared_dev` 與舊 ShareModules 的討論；本次僅文檔移交，並未授權直接刪除。
 - 2026-11-01 TXT 要求後續檔名使用**英文**，且設定變更優先提供一次性可複製的備份＋修改＋驗證命令，避免手動 IDE 或 nano。
 - 避免公開上傳 `.env`、Compose 內的密碼及認證資訊；此檔案只儲存非秘密版本、位置、容器及安全規則。
+
+## 2026-11-02｜Ubuntu 唯讀複查（使用者終端輸出）
+- MVP ZIP 根目錄 `/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1` **不是 Git repository**（正常區分 ZIP 工作區與 Git）；舊 PoC `/home/media/GitDev/ShareModules` 為 Git `main`；`/home/media/GitDev/DevEnv` 不是 Git repository。不要再要求使用者在 ZIP 路徑執行 `git status` 作為必要條件，也不得據此要求重建。
+- `docker ps`：`eachcore-dev-php-1` Up 5 hours；`eachcore-dev-mysql-1` Up 3 days (healthy)，映射 `127.0.0.1:33087->3306`。另有 iStudy `istudy-agent-1`、`istudy-php-1`、`istudy-nginx-1`；不碰 iStudy。容器 uptime 為**當次快照**。
+- 後端 `.env.testing`：`APP_ENV=testing`、`DB_CONNECTION=mysql`、`DB_DATABASE=shared_pest_test`、`DB_TEST_EXPECTED_DATABASE=shared_pest_test`；`phpunit.xml` 也將 expected DB 設為 `shared_pest_test`。Guard 引用見 `tests/TestCase.php`、`tests/ConcurrencyTestCase.php`、`app/Providers/AppServiceProvider.php`。此為**靜態設定確認**，未代表已在本輪跑 Pest。
+- Ubuntu **主機**執行 `php -l tests/Feature/BatchFTest.php` 得 `Command 'php' not found`；PHP 8.4 在既有 `eachcore-dev-php-1` 容器內，往後 lint 應用 `docker exec -w /workspace eachcore-dev-php-1 php -l tests/Feature/BatchFTest.php`，**不必為此另裝主機 PHP 8.5**。
+- 先前 `grep` 本輪未查到直接單行 `DB::table(...)->whereKey(...)`；`BatchFTest.php` 的 calendar_events/notifications 呼叫顯示 `where('id', ...)`。其他 `Model::query()->whereKey()` 為 Eloquent 合法用法，不能批次取代。單行 grep 不代表跨行／變數鏈全面掃描完成，仍需正式回歸。
+- **後續 AI 先查本檔與 Debug／Known Issues，已有確認資訊不得重複要求使用者查詢**；只有當實際變更、有衝突或與安全相關而需即時核對時再要求最小化檢查。取得新實機資訊，應依 AGENTS.md 許可更新此環境文件／交接 Debug／已知問題紀錄，明確標記日期、證據、未驗證事項；禁止寫入密碼、Token、完整 .env。
