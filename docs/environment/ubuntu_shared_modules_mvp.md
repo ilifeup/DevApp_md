@@ -40,3 +40,10 @@
 
 ## 執行規範
 請先讀 [Pest 資料庫安全](../testing/pest_database_safety.md)，再從 [最新 Debug 交接](../handoff/ubuntu_mvp_debug_20261101.md) 接續。
+
+## TXT 歷史資訊判讀（2026-11-01）
+- 最初記錄 `/home/media/GitDev/ShareModules -> /workspace`、`shared_dev`、`vendor` 不存在、Composer 尚未安裝，是**舊階段快照**，不是現在的目標設定。後來同一份日誌確認 `Shared_Modules_V1/backend -> /workspace`、`vendor` 已安裝、25/25 migration PASS；實際執行仍以 Ubuntu 唯讀環境檢查為準。
+- TXT 最初載明主機 RAM 約 14 GiB、可用 7.9 GiB、root 分割區 468 GB／剩餘 400 GB，這是**該時點容量快照**，不得當成當下可用容量保證。
+- 先前有**未來規劃刪除** `shared_dev` 與舊 ShareModules 的討論；本次僅文檔移交，並未授權直接刪除。
+- 2026-11-01 TXT 要求後續檔名使用**英文**，且設定變更優先提供一次性可複製的備份＋修改＋驗證命令，避免手動 IDE 或 nano。
+- 避免公開上傳 `.env`、Compose 內的密碼及認證資訊；此檔案只儲存非秘密版本、位置、容器及安全規則。
