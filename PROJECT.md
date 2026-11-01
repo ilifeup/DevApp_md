@@ -121,3 +121,10 @@ r7.2 原始 HTML 的「技術與架構」「核心流程」「資料庫」「核
 - 三 App **共用程式碼，不共用 DB**；各 App 的 DB 分別有 `app_tips`、`faqs`，各自 Filament 後台設定，不加 `app_id`。
 - MEDIA-01 Icon 可由各 App 後台從固定清單更換，沿用既有設定，不新增資料表或 Icon 模組；Icon 優先、文字其次、按鈕精簡。
 - 已核准 F 十模組照原範圍開發；r7.3 未驗收事項分開追蹤。最新執行指令：[47 模組整批指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)。**本節取代前面 45／46 模組與中央共用表的過時表述**。
+
+
+## 13. 長期儲存庫與三 App 路徑治理（2026-11-02）
+
+- [**Shared Modules／App-T／App-W／App-EC：五個邏輯儲存庫、文件目錄、Ubuntu 工作樹及分階段遷移方案**](docs/architecture/REPOSITORIES_AND_APP_BOUNDARIES_20261102.md)。
+- **DevApp_md 僅管理需求、決策、證據與索引；共用程式單一來源，三 App 各自部署／DB／Filament**。現有 Round11 ZIP 工作樹先保存快照、驗證 Git 基線，不能直接視為已同步至舊 PoC 或其他 GitHub repo。
+- 本節是文件組織與遷移提案；**未建立或搬移任何程式儲存庫**，也不變更已核准 47 模組（P0 33／P1 10／P2 4）及既有 API／DB 契約。前述 45／46 模組敘述均屬歷史節點。
