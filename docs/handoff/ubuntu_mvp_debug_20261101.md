@@ -167,3 +167,9 @@ docker exec -w /workspace \
 - 收藏：`Favorites::list()` 以 id DESC，每頁 50 筆；1,000 筆收藏中第一筆位於第 20 頁。原測試只找 page 1，`firstWhere` 回傳 null；修正測試為 page 20，不改正式分頁或 1,000 上限。
 - 單場改期：`RescheduleSession::handle` 對 scope=all 呼叫 `ApiException::validation(['scope'=>['單場活動只能改這一場。']])`，頂層 message 是 `輸入資料有誤。`；改測試檢查 `$e->fields['scope']`，保留欄位規則，不修改 production。
 - 仍未套用 Ubuntu／執行 Pest；實測基準 **145 PASS/17 FAIL**。第七批必須在第六批之後套用，勿對目前只有前三批的 Ubuntu 工作樹直接套用。
+
+### 2026-11-02｜第八批增量 Patch：媒體 18 MiB 上限斷言
+- `shared_mvp_debug_round8_20261102.patch`，基線為已套用第四至第七批的原始碼，僅改 `backend/tests/Feature/Decision1031Test.php`；本地 `git apply --check` PASS。
+- `MediaStorageService::readAndValidate` 先判斷 filesize 大於 18,874,368 bytes，使用 `ApiException::validation(['file'=>['...18 MiB...']])` 拒絕，頂層例外訊息固定為「輸入資料有誤。」。原測試 `toThrow(ApiException::class, '18 MiB')` 因訊息位置錯誤失敗。
+- 改為 try/catch 檢查 `$e->status === 422` 與 `implode(' ', $e->fields['file'] ?? [])` 包含 `18 MiB`；保留無副作用斷言及恰好上限可接受的驗證；正式媒體程式不變。
+- 尚未 Ubuntu 實測；基準仍為 145 PASS / 17 FAIL。下一步查 Push/ACCESS-01，並整合第 4–8 批成單一 Ubuntu patch，避免重複套用。
