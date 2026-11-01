@@ -113,3 +113,8 @@ docker exec -w /workspace \
 - 分類：Page Atlas 來源驗證／交易測試；CatalogAccess `makeSeries(price=0)` 與 `CreateSeriesWithLessons` `price min:1`；BatchF `bfLiveEvent()` 已開始後仍建立 booking；Push lease、preferences、module gate；SHOP sync module gate；CSV `FormResource::exportCsv()` `(int) auth()->id()` 導致 actor_id=0 FK；ServiceSlot currency NULL；Content comments_enabled；Favorites placeholder；BookingFlow DueSource enum/string；ModuleSwitch TAG dependency；GProfiles dataset config boot；Media 18MiB error order；posts visibility；Reschedule error order。
 - 特別注意：上述部分為根因候選，需依缺失的 `routes/api.php`、Controllers、config、migrations、factories、Flutter 與實機驗證，不可逕稱全部已修。嚴禁為讓測試變綠而放寬 booking 截止、模組依賴、ACCESS、外鍵、Page Atlas source check、Push lease 或 DB Guard。
 - 下一輪優先**一次取得缺失的整套原始碼**，按跨層 API→Controller→Action→Model→DB→Response 和測試 fixtures 集中修正；目標回歸後完整 Pest/Concurrency/Flutter/Android 驗收。已有環境資訊勿要求使用者重查。
+
+### 2026-11-02｜418-file fullchain ZIP 與首批集中修補
+- 收到 `shared-mvp-fullchain-20261102.zip`，ZIP 419 entries，418 候選來源；已解壓分析。內有 backend routes 3、migrations 25，但 **flutter/ 0、backend/config/ 0**，故仍不能稱 Flutter/config 全鏈路已覆蓋。
+- 產出 `shared_mvp_debug_safe_patch_20261102.patch`（7 files）及同名 ZIP：`GenerateServiceSlots` currency null fallback TWD；`FormResource::exportCsv` 未登入 audit actor_id 保留 null 避免 FK 0；`CatalogAccessTest` makeSeries price 0→1；`BatchCContentGrowthTest` bcPost comments_enabled=true；`BookingFlowTest` DueSource enum 比對；`GProfilesTest` dataset 在 Laravel bootstrap 前不呼叫 config()；`BatchBCatalogTest` service template currency TWD。
+- 靜態 patch apply check PASS；**未執行 PHP/Pest、未修改 Ubuntu 原始碼、未宣稱修復 36 FAIL**。需用 `shared_pest_test` 驗證，並繼續處理 PageAtlas source fixture、ATTEND live booking setup、Push、SHOP gate、module dependencies、Favorites pagination 等。
