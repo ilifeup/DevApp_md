@@ -65,3 +65,10 @@
 - **共用程式碼與 Migration，三 App 各自部署／各自 DB／各自 Filament 後台實例**；TIPS-01 的 `app_tips`、QA-01 的 `faqs` 均為每 App DB 各一表，**不加 app_id、不共用中央 DB**。
 - 影音操作 **Icon 優先、文字其次、按鈕精簡**；各 App 後台可從白名單更換 Icon ID，不允許任意 HTML/JS/SVG；影音 UI 可見文字仍禁止「下載」。
 - 新增 **QA-01（P0）** 極簡 FAQ，連同 TIPS-01（P0）使正式模組數為 **47，P0 33**。本節及[最新 Claude 指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)優先於第 7/8 節相衝突的舊描述。
+
+## 10. Repository confidentiality and terminology rule (2026-11-02, user approved)
+- Forbidden exact Chinese terms: `天帝教`, `無相`, `無相氣學`. Do not include them in repo text, filenames, comments, documentation, fixtures, commits, issues, PR descriptions, or generated outputs.
+- Use neutral English identifiers `App-T`, `App-W`, `Tiandi`, `Wuxiang` or opaque module IDs where necessary. SHA-256 is not encryption and does not guarantee secrecy of guessable names.
+- Before commit, scan all tracked files and filenames with Unicode NFC normalization; redact prohibited names without changing API/DB contracts. If contract changes are required, stop and seek approval.
+- Do not expose the original restricted terms in scan logs. Removing current text does not erase Git history, caches, forks or clones; rewriting history requires separate approval.
+- Default branch code search cannot prove other branches clean; verify each target branch separately.
