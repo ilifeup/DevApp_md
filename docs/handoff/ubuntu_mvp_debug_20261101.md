@@ -141,3 +141,10 @@ docker exec -w /workspace \
 - 剩餘失敗：BatchAPlatform 1、BatchBCatalog 1、BatchCContentGrowth 1、BatchF 7、Decision1031 1、ModuleSwitch 3、PageAtlas 2（合計 17）。
 - PageAtlas：retire-only 測試中未退休的 App-Tst-02 status 變 `unverified` 而非 `active`；batch midway DB CHECK constraint throws 後 App-Tst-01 page_name 仍為 `新名` 而非原名，疑似交易隔離／表引擎／測試交易連線，需檢查 Migration 與 MySQL 行為，不可放寬交易原子性。
 - 尚未完成 17 FAIL 的修復，需針對實機日誌與原始碼逐項分析後產出下一批補丁；不碰正式 DB。
+
+### 2026-11-02｜第四批增量 Patch（尚未 Ubuntu 實測）
+- `shared_mvp_debug_round4_20261102.patch`：僅 2 個測試檔，針對**已套用前三批整合補丁的工作樹**，不是原始 ZIP；在該基線上反向 `git apply --reverse --check` 成功。
+- `BatchFTest.php` F02：原測試對已開始的 `bfLiveEvent()` 直接 `CreateBooking`，合法觸發 BOOKING_CLOSED；改用現有 `bfBookForCheckin()` fixture，先預約後移至簽到時段，不削弱正式規則。
+- `PageAtlasTest.php` retire-only：`paDef()` 的元件及 DB refs 沒有 verified 標示，`ManifestValidator` 按規則產出 `unverified`，故未退休的第二頁應保持 `unverified`；修正錯誤預期，保留證據檢查。
+- **重要未解**：PageAtlas `DB::transaction` 中第二筆 CHECK 失敗後第一筆修改仍保留；必須檢查 MySQL 表引擎、交易連線及測試中的 DDL 隱含 commit。不得修改成允許部分寫入或跳過原子性測試。
+- 此批未經 Ubuntu PHP/Pest 回歸；不宣稱剩餘 17 項已減少。
