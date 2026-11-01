@@ -55,3 +55,11 @@
 - Ubuntu **主機**執行 `php -l tests/Feature/BatchFTest.php` 得 `Command 'php' not found`；PHP 8.4 在既有 `eachcore-dev-php-1` 容器內，往後 lint 應用 `docker exec -w /workspace eachcore-dev-php-1 php -l tests/Feature/BatchFTest.php`，**不必為此另裝主機 PHP 8.5**。
 - 先前 `grep` 本輪未查到直接單行 `DB::table(...)->whereKey(...)`；`BatchFTest.php` 的 calendar_events/notifications 呼叫顯示 `where('id', ...)`。其他 `Model::query()->whereKey()` 為 Eloquent 合法用法，不能批次取代。單行 grep 不代表跨行／變數鏈全面掃描完成，仍需正式回歸。
 - **後續 AI 先查本檔與 Debug／Known Issues，已有確認資訊不得重複要求使用者查詢**；只有當實際變更、有衝突或與安全相關而需即時核對時再要求最小化檢查。取得新實機資訊，應依 AGENTS.md 許可更新此環境文件／交接 Debug／已知問題紀錄，明確標記日期、證據、未驗證事項；禁止寫入密碼、Token、完整 .env。
+
+## 2026-11-02 最新已驗證環境與回歸（後續 AI 必讀）
+- 詳細環境快照：**[UBUNTU_MVP_VERIFIED_20261102.md](UBUNTU_MVP_VERIFIED_20261102.md)**。
+- 已知根因／防重犯：**[DEBUG_PLAYBOOK_20261102.md](../testing/DEBUG_PLAYBOOK_20261102.md)**。
+- 本次最終完整 Feature：**162 PASS／0 FAIL、691 assertions、46.70 秒**（Round11，`mvp-feature-final-round11-20261102-024503.zip`）。早期 36/17/5 FAIL 均為歷史狀態，不得當成當前未修清單。
+- Laravel testing 容器預設 DB 可能仍是 `shared_mvp_test`；執行診斷或 Pest 都須同時覆蓋 `DB_CONNECTION=mysql`、`DB_DATABASE=shared_pest_test`、`DB_TEST_EXPECTED_DATABASE=shared_pest_test`。不得停用 TestDatabaseGuard。
+- 媒體加密測試 PHP CLI 128 MiB OOM，Pest 單次加 `php -d memory_limit=512M`；不修改正式 PHP 設定。
+- Concurrency、Flutter、真實 FCM/Woo 與正式部署仍未經本輪驗證。
