@@ -93,3 +93,8 @@ docker exec -w /workspace \
 - 沒有證據顯示 Concurrency、Flutter Analyze/Test 或 Android 建置已通過。
 - **不要再次執行同一批 whereKey 修補**，除非本機目前原始碼證明該錯誤重現；先查 [已知錯誤與防止重犯](../testing/KNOWN_ISSUES_AND_PREVENTION.md)。
 
+
+## 2026-11-02｜最新實機回報與加速驗收順序
+- 使用者在既有 PHP 容器 `eachcore-dev-php-1` 執行 `php -l tests/Feature/BatchFTest.php`，回傳 `No syntax errors detected in tests/Feature/BatchFTest.php`，記為 **PHP lint PASS（本輪）**；**不是** BatchF Pest PASS，也沒有新 Feature／Concurrency／Flutter 結果。
+- 依既有 Pest 安全規範，後續優先單次收集 BatchF 與完整 Feature 最新測試輸出，分類根因後集中修復，再執行 Unit／Schema／Feature／Concurrency／Flutter／Android 的分層驗收；Concurrency 前必須確認 TestDatabaseGuard 攔截錯誤 DB。
+- 避免再問已知 Ubuntu 路徑、主機 PHP、容器名稱、DB 分工；需要最新證據時只提供一段可複製的 Docker 指令。保留 11 FAIL 歷史狀態直到有新 Pest 結果取代。
