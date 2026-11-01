@@ -218,3 +218,9 @@ docker exec -w /workspace \
 - 已確認 Ubuntu `APP_ENV=testing`、DB `shared_pest_test`、`push.max_tokens_per_user=10`，設定快取不存在。先前 `max_tokens_per_user=0` 假設已排除；`push.claim_ttl_seconds`、`push.max_attempts` 為 null，但 Job 使用 class constants `CLAIM_TTL_SECONDS=600`、`MAX_ATTEMPTS=10`，不可擅自更改。
 - 建立 `shared_mvp_push_diagnostic_round10_20261102.patch`/ZIP：僅改 `backend/tests/Feature/BatchFTest.php`，增加 `bfPushDiagnostic()` 輸出不含裝置 token/密鑰的通知狀態、claim、attempts、偏好、有效 token 數；在 NOTIFY-02 和 R05 斷言失敗時附上診斷資訊，F03 驗證 stale lease 先決條件。
 - 本地 `git apply --check` PASS，**未在 Ubuntu 執行**；不改正式 Push Job、lease、資料庫或設定。下一步只跑 `BatchFTest.php`，觀察 3 個失敗詳細狀態。
+
+### 2026-11-02 02:40｜Round10 根因確定；Round11 修補待 Ubuntu 驗證
+- Round10 Ubuntu `mvp-push-round10-result-20261102-024009.zip`：PHP syntax PASS，Push targeted **3 FAIL / 10 assertions / 14.33s**。NOTIFY-02、R05 診斷皆為 `push_attempts=1`、`push_claim_set=true`、`pushed_at=false`、active true、family false、category allowed true、eligible_token_count=2、token_limit=10，sender 0 次；F03 stale claim 前置斷言 PASS，sender exception 未觸發。
+- 根因定位 `app/Jobs/SendPushNotification.php::renew()`：`UPDATE push_claimed_at=now()` 在同一秒內與既有值相同，MySQL changed rows 可回傳 0；原碼以 `update(...)===1` 判斷 lease 所有權，誤判為 lease lost，於第一個 token 前停止。
+- Round11 `shared_mvp_push_round11_20261102.patch` / ZIP：只修改正式 Job 的 `renew()`；先執行有條件更新，若受影響列為 0，對同一 `id + push_claim` 再查 `exists()`，只有仍持有相同 claim 才繼續。保留 lease owner 限制、不放寬其他條件；`php -l` 與本地 `git apply --check` PASS。注意 `UPDATE` 和 `exists()` 之間仍存在既有發送前租約競態窗口，需以 R05 實機測試確認。
+- **Round11 尚未 Ubuntu Pest 測試**。先跑 BatchFTest Push 三案例，若 PASS 再完整 Feature。
