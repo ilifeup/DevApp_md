@@ -68,7 +68,7 @@
 
 ## 10. Repository confidentiality and terminology rule (2026-11-02, user approved)
 
-- Do not commit or publish the following exact Chinese strings anywhere in this repository, including Markdown, filenames, examples, comments, generated documentation, test fixtures, and future AI output: `天帝教`, `無相`, `無相氣學`.
+- Do not commit or publish the following exact Chinese strings anywhere in this repository, including Markdown, filenames, examples, comments, generated documentation, test fixtures, and future AI output: `U+5929 U+5E1D U+6559`, `U+7121 U+76F8`, `U+7121 U+76F8 U+6C23 U+5B78`.
 - When describing the relevant apps or organization, use neutral English identifiers such as `App-T`, `App-W`, `Tiandi`, `Wuxiang`, or generic module IDs, only where necessary. Prefer opaque identifiers when names are not needed. A SHA-256 digest may be used as an internal reference but is **not encryption or reliable secrecy** for low-entropy names; do not publish a lookup table that reveals the original names.
 - Before any commit, scan **all tracked text files and filenames**, including hidden folders and generated content, for exact forbidden strings. Normalize Unicode to NFC before scanning, and scan new changes before merging. If matches exist, redact or replace the words without altering technical contracts, API fields, database keys, or approved business behavior; if changing a contract is unavoidable, stop and request approval.
 - Do not put the forbidden Chinese strings into CI logs, issue titles, pull requests, commit messages, or GitHub search reports. When reporting findings, use generic labels such as `restricted-term-1/2/3` and file paths only.
