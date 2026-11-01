@@ -65,3 +65,12 @@
 - **共用程式碼與 Migration，三 App 各自部署／各自 DB／各自 Filament 後台實例**；TIPS-01 的 `app_tips`、QA-01 的 `faqs` 均為每 App DB 各一表，**不加 app_id、不共用中央 DB**。
 - 影音操作 **Icon 優先、文字其次、按鈕精簡**；各 App 後台可從白名單更換 Icon ID，不允許任意 HTML/JS/SVG；影音 UI 可見文字仍禁止「下載」。
 - 新增 **QA-01（P0）** 極簡 FAQ，連同 TIPS-01（P0）使正式模組數為 **47，P0 33**。本節及[最新 Claude 指令](ChangeLog/2026-11-01_SharedModulesV1_Claude_47模組_TIPS_QA_影音Icon_三App隔離_整批指令.md)優先於第 7/8 節相衝突的舊描述。
+
+## 10. Repository confidentiality and terminology rule (2026-11-02, user approved)
+
+- Do not commit or publish the following exact Chinese strings anywhere in this repository, including Markdown, filenames, examples, comments, generated documentation, test fixtures, and future AI output: `天帝教`, `無相`, `無相氣學`.
+- When describing the relevant apps or organization, use neutral English identifiers such as `App-T`, `App-W`, `Tiandi`, `Wuxiang`, or generic module IDs, only where necessary. Prefer opaque identifiers when names are not needed. A SHA-256 digest may be used as an internal reference but is **not encryption or reliable secrecy** for low-entropy names; do not publish a lookup table that reveals the original names.
+- Before any commit, scan **all tracked text files and filenames**, including hidden folders and generated content, for exact forbidden strings. Normalize Unicode to NFC before scanning, and scan new changes before merging. If matches exist, redact or replace the words without altering technical contracts, API fields, database keys, or approved business behavior; if changing a contract is unavoidable, stop and request approval.
+- Do not put the forbidden Chinese strings into CI logs, issue titles, pull requests, commit messages, or GitHub search reports. When reporting findings, use generic labels such as `restricted-term-1/2/3` and file paths only.
+- This policy applies to **future repository content and current branch cleanup**. Removing strings from current files does **not** erase past Git history, forks, clones, caches, or previously published artifacts. History rewrite is a separate destructive operation and requires explicit approval.
+- A search of the default branch alone does not prove all branches are clean. Check target branches separately and state any scan limitations.
