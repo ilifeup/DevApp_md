@@ -193,3 +193,10 @@ docker exec -w /workspace \
 - SHOP 根因線索：`WooCatalogSync::readAll()` 對缺少 X-WP-Total headers 的短頁不視為完成，須再讀到空頁確認；SHOP-01 `Http::sequence()` 僅提供兩個非空 response，可能在第三頁失敗而使 `sync()` 回報 seen=0；應與 F01 已通過的測試對照，不可放寬正式分頁一致性。
 - Push 三項均無 sender 觸發，優先檢查 `PushPreferences::allows`、通知 `claim` 早退、User active/family；不刪除 lease 保護。ACCESS 需檢查 seed 的 page rule、Post visibility 與列表查詢。
 - 尚未產出第九批修補；須先定位根因再修復，不能宣稱 5 項已通過。
+
+### 2026-11-02｜第九批：ACCESS/SHOP fixture 根因＋Push 前置診斷
+- 產出 `shared_mvp_debug_round9_20261102.patch` 與 ZIP，基線為 Ubuntu 已套用第 1–8 批後的工作樹，僅修改 `backend/tests/Feature/BatchAPlatformTest.php` 和 `backend/tests/Feature/BatchFTest.php`；`git apply --check` 和 `git apply --reverse --check` 在相應本地基線均 PASS。
+- ACCESS-01：測試新建 Post 未設定 status，migration `2026_11_03_000016` 的預設是 `draft`，`Post::scopePublished` 正確拒絕草稿；兩篇 fixture 加 `'status'=>'published'`，不修改 API/存取規則。
+- SHOP-01：`WooCatalogSync::readAll` 在沒有分頁標頭時不能以短頁證明完整，第二次讀取會耗盡 fake sequence 導致 `seen=0`；兩次模擬回應補上各自一致的 `X-WP-Total` 和 `X-WP-TotalPages`，不放寬正式同步的分頁驗證。
+- Push：NOTIFY-02 加入執行前條件斷言（active、非 family、read_at null、preferences allow、兩筆有效 token）以定位早退根因；F03/R05 仍需同類根因追查，不改正式 claim/lease/renew 安全機制。
+- **尚未 Ubuntu 實測**，基準仍 **157 PASS/5 FAIL**。本批需套用在第 1–8 批已套用後的版本，勿重套前三批。
