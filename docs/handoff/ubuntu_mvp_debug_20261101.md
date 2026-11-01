@@ -98,3 +98,12 @@ docker exec -w /workspace \
 - 使用者在既有 PHP 容器 `eachcore-dev-php-1` 執行 `php -l tests/Feature/BatchFTest.php`，回傳 `No syntax errors detected in tests/Feature/BatchFTest.php`，記為 **PHP lint PASS（本輪）**；**不是** BatchF Pest PASS，也沒有新 Feature／Concurrency／Flutter 結果。
 - 依既有 Pest 安全規範，後續優先單次收集 BatchF 與完整 Feature 最新測試輸出，分類根因後集中修復，再執行 Unit／Schema／Feature／Concurrency／Flutter／Android 的分層驗收；Concurrency 前必須確認 TestDatabaseGuard 攔截錯誤 DB。
 - 避免再問已知 Ubuntu 路徑、主機 PHP、容器名稱、DB 分工；需要最新證據時只提供一段可複製的 Docker 指令。保留 11 FAIL 歷史狀態直到有新 Pest 結果取代。
+
+## 2026-11-02 01:49–01:50（台灣）｜最新 Ubuntu 實機回歸
+- 來源：使用者上傳終端輸出 `貼上的文字 (1)(20261101-175204).txt`；**本次僅分析日誌，未修改 Ubuntu 原始碼**。
+- Docker mount 確認：MVP ZIP root `.../Shared_Modules_V1 -> /project`；backend `.../Shared_Modules_V1/backend -> /workspace`。
+- `.env.testing`：`APP_ENV=testing`、`DB_CONNECTION=mysql`、`DB_DATABASE=shared_pest_test`、`DB_TEST_EXPECTED_DATABASE=shared_pest_test`。
+- BatchF：**20 PASS／11 FAIL，104 assertions，16.61s**；失敗分布與上一輪相同：報名截止3、Push3、SHOP/module gate4、Form CSV Audit1。
+- 完整 Feature：**124 PASS／36 FAIL，502 assertions，63.14s**；相較舊輪 114 PASS／46 FAIL，淨改善10。不能稱整套 PASS。`BatchEPointsCalendarPaymentTest`、`MediaCenterTest`、`InvariantCheckerTest`、`LockScopeTest`、`ReviewFixesTest`、`TransactionRunnerTest` 等檔案在此次 Feature 輸出為 PASS。
+- Feature 額外失敗包括：Page Atlas（來源路徑 `mobile/lib/app.dart` 不存在、鎖/回滾/同步）、ACCESS posts visibility、Catalog 單場 reschedule 斷言與 service currency NULL、Content 留言/收藏、Booking `DueSource` enum 與字串比較、CatalogAccess 建立課程 fixture 驗證、Media 18MiB 邊界、GProfiles、ModuleSwitch。詳情依原始日誌；尚未逐項確認根因。
+- **下一步**：先讀取目前 Ubuntu 原始碼相關段落，按共同根因分組制定一次性修補；不得直接取消 gate、截止時間、FK 或 TestDatabaseGuard。修復後先目標測試再完整回歸；Concurrency 需另驗 Guard 後才可跑。
