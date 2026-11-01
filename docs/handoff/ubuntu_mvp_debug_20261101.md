@@ -161,3 +161,9 @@ docker exec -w /workspace \
 - 根因：測試於 Laravel `RefreshDatabase` 的交易內執行 `ALTER TABLE ui_pages ADD CONSTRAINT`，MySQL DDL 隱含提交，破壞測試交易邊界，導致第一筆更新沒有回滾；不能據此認定正式 `PageAtlasSync` 的 `DB::transaction` 失效。
 - 改用隔離的 Eloquent model event dispatcher，在第二筆 `UiPage::saving` 時拋出例外；保留第一筆更新後第二筆失敗的完整 rollback 斷言；`finally` 恢復原 dispatcher，不動 schema、不改 production 程式。
 - 尚未 Ubuntu 實測；仍需 Pest 回歸驗證；基準 145 PASS/17 FAIL。
+
+### 2026-11-02｜第七批增量 Patch（靜態檢查通過，待 Ubuntu 回歸）
+- `shared_mvp_debug_round7_20261102.patch`：以已套用前三批整合版＋第四至第六批為基線；僅改 `BatchCContentGrowthTest.php` 與 `BatchBCatalogTest.php`，本地 `git apply --check` PASS。
+- 收藏：`Favorites::list()` 以 id DESC，每頁 50 筆；1,000 筆收藏中第一筆位於第 20 頁。原測試只找 page 1，`firstWhere` 回傳 null；修正測試為 page 20，不改正式分頁或 1,000 上限。
+- 單場改期：`RescheduleSession::handle` 對 scope=all 呼叫 `ApiException::validation(['scope'=>['單場活動只能改這一場。']])`，頂層 message 是 `輸入資料有誤。`；改測試檢查 `$e->fields['scope']`，保留欄位規則，不修改 production。
+- 仍未套用 Ubuntu／執行 Pest；實測基準 **145 PASS/17 FAIL**。第七批必須在第六批之後套用，勿對目前只有前三批的 Ubuntu 工作樹直接套用。
