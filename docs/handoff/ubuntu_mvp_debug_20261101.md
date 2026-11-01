@@ -133,3 +133,11 @@ docker exec -w /workspace \
 - 深入檢視 `SendPushNotification::handle`：先 claim、偏好/帳號過濾、逐裝置 renew lease、remember、finish，具防重送與失效裝置處理；仍須以實機測試釐清 0 sends，不能任意移除 lease 或權限檢查。
 - `Audit::record` 接受 nullable actor，Migration `2026_11_01_000008_create_notifications_settings_audit.php` 的 audit_events.actor_id nullable FK；故 CSV audit 的 0→null 修補符合既有 schema，但權限端點仍須另行驗證。
 - **尚未套用 Ubuntu／未執行 PHP/Pest**，baseline 124 PASS/36 FAIL。下階段仍須實機回歸，並處理 SHOP module requires/dependencies、Content module dependencies、PageAtlas source/manifest、Push fixture 等剩餘根因。
+
+### 2026-11-02 02:15｜Ubuntu 整合 Patch 實機 Feature 回歸
+- 使用者確認 `git apply --reverse --check` 顯示 `PATCH_ALREADY_APPLIED`；排除 Docker storage/vendor/env 的原始碼備份 `mvp-source-20261102-021507.tar.gz` 建立成功。
+- 上傳 `mvp-debug-result-20261102-021553.zip`，含 syntax + feature log；11 個變更 PHP 檔 `php -l` 全部 PASS。
+- 完整 Feature：**145 passed, 17 failed, 620 assertions, 60.19s**；前次 **124 passed, 36 failed, 502 assertions**，失敗淨減 19。注意測試總數從 160 增至 162，需比較個別案例而非宣稱 19 項皆已修復。
+- 剩餘失敗：BatchAPlatform 1、BatchBCatalog 1、BatchCContentGrowth 1、BatchF 7、Decision1031 1、ModuleSwitch 3、PageAtlas 2（合計 17）。
+- PageAtlas：retire-only 測試中未退休的 App-Tst-02 status 變 `unverified` 而非 `active`；batch midway DB CHECK constraint throws 後 App-Tst-01 page_name 仍為 `新名` 而非原名，疑似交易隔離／表引擎／測試交易連線，需檢查 Migration 與 MySQL 行為，不可放寬交易原子性。
+- 尚未完成 17 FAIL 的修復，需針對實機日誌與原始碼逐項分析後產出下一批補丁；不碰正式 DB。
