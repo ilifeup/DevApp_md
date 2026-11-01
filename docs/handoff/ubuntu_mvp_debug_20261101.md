@@ -118,3 +118,7 @@ docker exec -w /workspace \
 - 收到 `shared-mvp-fullchain-20261102.zip`，ZIP 419 entries，418 候選來源；已解壓分析。內有 backend routes 3、migrations 25，但 **flutter/ 0、backend/config/ 0**，故仍不能稱 Flutter/config 全鏈路已覆蓋。
 - 產出 `shared_mvp_debug_safe_patch_20261102.patch`（7 files）及同名 ZIP：`GenerateServiceSlots` currency null fallback TWD；`FormResource::exportCsv` 未登入 audit actor_id 保留 null 避免 FK 0；`CatalogAccessTest` makeSeries price 0→1；`BatchCContentGrowthTest` bcPost comments_enabled=true；`BookingFlowTest` DueSource enum 比對；`GProfilesTest` dataset 在 Laravel bootstrap 前不呼叫 config()；`BatchBCatalogTest` service template currency TWD。
 - 靜態 patch apply check PASS；**未執行 PHP/Pest、未修改 Ubuntu 原始碼、未宣稱修復 36 FAIL**。需用 `shared_pest_test` 驗證，並繼續處理 PageAtlas source fixture、ATTEND live booking setup、Push、SHOP gate、module dependencies、Favorites pagination 等。
+
+### 2026-11-02｜Page Atlas 第二批修補（未實測）
+- 產出 `shared_mvp_debug_followup_20261102.patch` 與 ZIP，3 files：`tests/Feature/PageAtlasTest.php`、`tests/Feature/Batch4ReviewFixesTest.php` 測試專用 `config(['page_atlas.check_sources'=>false])`，不修改正式來源檢查；`app/Services/PageAtlas/PageAtlasSync.php` 在驗證成功且空 manifest 時直接回傳，避免無效等待同步鎖。
+- 已靜態 `git apply --check` 無錯；尚未套用 Ubuntu、尚未跑 Pest。與前一批 7 files 合計 10 files；**Feature baseline 124 PASS/36 FAIL** 不變。需注意 source path 檢查本身應另有專用測試，不能因 synthetic fixture 變更而失去覆蓋。
