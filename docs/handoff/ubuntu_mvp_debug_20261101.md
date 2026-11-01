@@ -122,3 +122,8 @@ docker exec -w /workspace \
 ### 2026-11-02｜Page Atlas 第二批修補（未實測）
 - 產出 `shared_mvp_debug_followup_20261102.patch` 與 ZIP，3 files：`tests/Feature/PageAtlasTest.php`、`tests/Feature/Batch4ReviewFixesTest.php` 測試專用 `config(['page_atlas.check_sources'=>false])`，不修改正式來源檢查；`app/Services/PageAtlas/PageAtlasSync.php` 在驗證成功且空 manifest 時直接回傳，避免無效等待同步鎖。
 - 已靜態 `git apply --check` 無錯；尚未套用 Ubuntu、尚未跑 Pest。與前一批 7 files 合計 10 files；**Feature baseline 124 PASS/36 FAIL** 不變。需注意 source path 檢查本身應另有專用測試，不能因 synthetic fixture 變更而失去覆蓋。
+
+### 2026-11-02｜第三批 ATTEND-01 測試 fixture 修補（未實測）
+- 根因已由原始碼確認：`BatchFTest.php` 的 `bfLiveEvent()` 建立開始於 `now()-10min` 的活動，之後才呼叫 `CreateBooking`，被 `CreateBooking` 的 `hasStarted()` 正確拒絕。
+- 產出 `shared_mvp_attendance_fixture_20261102.patch` / ZIP：只改 `backend/tests/Feature/BatchFTest.php`，新增 `bfBookForCheckin()` 先移到未來合法報名，再移回目前簽到窗口；兩處 ATTEND-01 測試使用此 helper。**未放寬正式報名截止邏輯**。
+- `git apply --check` PASS；未套用 Ubuntu、未跑 Pest。先前兩批 patch 也仍未實測，Feature baseline 124 PASS/36 FAIL。
