@@ -179,3 +179,9 @@ docker exec -w /workspace \
 - Push 失敗 NOTIFY-02/F03/R05 均有 `handle()` 未呼叫 sender/未拋預期錯誤現象；初查 `SendPushNotification::handle` 於 claim 後會因 User active/family 或 PushPreferences 禁止而直接 finish；UserFactory verified() 明確設 active=true/family=false，故不宜猜測改掉權限。需檢查實際 `push.categories` / `push.template_categories`、notification model cast/DB 值及測試設定，勿破壞 lease/retry 語義。
 - ACCESS-01 的 BatchAPlatform 測試預期 guest 列表包含 public post，但實測為空；需釐清頁面 access rule/帖子條件與 fixture，未修改生產存取策略。
 - **尚未 Ubuntu 回歸第四至第八批**，基準仍 145 PASS/17 FAIL；待確認其餘 Push/ACCESS 問題後再做下一輪整合與實測。
+
+### 2026-11-02 02:27｜Round4–8 Ubuntu 回歸中斷（PHP 128 MiB OOM）
+- 使用者上傳 `mvp-debug-round4to8-result-20261102-022715.zip`；6 個修改 PHP 測試檔 `php -l` 全部 PASS。
+- 已執行的 BatchBCatalog、BatchCContentGrowth 全部 PASS；BatchF ATTEND/F02 PASS，NOTIFY-02、SHOP-01、F03、R05 仍 FAIL；BatchAPlatform ACCESS-01 仍 FAIL。
+- **完整 Pest 未跑完**：在 `app/Services/Media/MediaKeyring.php:122` `openssl_encrypt`，PHP Fatal `Allowed memory size of 134217728 bytes exhausted (tried to allocate 18878464 bytes)`；不得把此輪當成完整 PASS/FAIL 統計，也不能認定媒體加密程式失效。
+- 下一步僅重跑完整 Feature，`php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never`，仍使用 `APP_ENV=testing DB_DATABASE=shared_pest_test DB_TEST_EXPECTED_DATABASE=shared_pest_test`，不修改正式 php.ini 或 DB。取得完整日誌再排查 Push/SHOP/ACCESS/ModuleSwitch/PageAtlas。
