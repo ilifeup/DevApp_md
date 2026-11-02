@@ -1,0 +1,27 @@
+# Shared Modules V1 MVP｜ChatGPT 全面接手（2026-11-02）
+
+> 使用者確認 Claude Code 額度用盡，先前交付的「B1 範圍與 47 模組進度完整盤點」指令**沒有執行**。改由 ChatGPT 主導審查、計畫、GitHub 文件與可取得原始碼的補丁；不得誤稱 Claude 已輸出報告或完成 B1。
+
+## 現有已確認基線
+- Ubuntu 本機 `/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1`：分支 `master`，root commit `e20b294`，tag `round11-baseline`，561 個檔案；本機無 Git 遠端。
+- B0 Git 基線完成，但不等於 47 模組完成。GitHub DevApp_md 只管理文件。
+- Round11 Feature 162 PASS／0 FAIL、691 assertions（先前實機證據）；Unit／Schema 只有較早測試結果，Round11 後待重跑；Concurrency／Flutter／Android／E2E 未驗收。
+- 正式規模 47 模組（P0 33／P1 10／P2 4）；三 App 共用程式但各自 DB、Filament。App-T 優先。
+
+## B1 審查範圍（尚未核准程式修改）
+- F1：影音離線授權撤銷、裝置解除、金鑰外洩時回應 `ok`、`revoked`、`rekey_required` 的正確性與撤銷測試。
+- F3：忘記密碼寄信失敗仍回 200、`password/forgot` 路由測試缺口；需先釐清同步／非同步語意。
+- F5：活動簽到／簽退／重複掃描，P1，是否納入 B1 尚待核准。
+- F2、F4、F6–F9 僅盤點，不自動擴大 B1。Claude 截圖為部分畫面，**完整檔案清單／根因／測試證據尚未交付**。
+- 不建立新分支、不做無關重構、不擴大功能、不改正式 API/DB 契約；需要重大變更先核准。集中修改、測試、提交。
+
+## ChatGPT 接手工作方式
+1. 先讀 `AGENTS.md`、`PROJECT.md`、正式模組規格、最新 ChangeLog、已知錯誤與環境文件；維持需求／實作／驗收三版本分離。
+2. GitHub 文件可直接審查與同步；**Ubuntu 本機程式碼無法由 GitHub 文件庫取得**，需要使用者上傳本機基線 ZIP 或必要檔案，或在 Ubuntu 執行一次性唯讀打包指令。不可拿舊 PoC 代替。
+3. 收到本機基線後，先盤點 47 模組及 B1 實際檔案/根因/風險，輸出完整可下載 UTF-8 MD 報告；使用者核准後才提供精確 patch、單次套用與受控測試步驟。
+4. 不接觸 iStudy、不重啟 Docker、不改 Compose、不動非測試 DB；Pest 僅能使用 `shared_pest_runner`、`shared_pest_test`，必須保留 TestDatabaseGuard。
+5. 不存取或上傳 `.env`、密碼、金鑰、私人檔案、`vendor`、`.git`、備份；維持 [B0 安全處理](UBUNTU_LOCAL_GIT_BASELINE_B0_20261102.md)。
+6. 每次重要審查/修正/驗收，產出完整 MD 可下載檔，並同步 DevApp_md 交接與已知問題（僅在有證據時更新狀態）。禁止僅靠終端截圖交接。
+
+## 未完成的下一個具體任務
+取得 `e20b294` 本機程式快照（敏感檔排除）後，**只讀**完成 47 模組整體進度盤點與 B1 F1/F3/F5 精確修改範圍報告；使用者批准之前不修改程式。
