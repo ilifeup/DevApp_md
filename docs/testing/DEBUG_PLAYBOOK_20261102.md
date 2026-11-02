@@ -53,3 +53,10 @@
 - 避免過多增量補丁，集中合併並完整回歸；不操作正式資料庫、不動 iStudy、不安裝無必要套件。
 - 測試證據必須記錄 PASS、FAIL、assertions、秒數、測試範圍、來源檔名。**不以 CI 綠燈自動關閉缺陷**。
 - 下一階段仍需 Unit、Schema、Concurrency、Flutter、外部 FCM/Woo、E2E、部署驗證；它們不包含在 162 項 Feature 之內。
+
+## 2026-11-02 B1 PHP lint 防重犯：Docker 路徑及子 Shell 錯誤處理
+
+- **BUG-UBUNTU-B1-LINT-01（已確認指令錯誤，程式未受損）**：`eachcore-dev-php-1` 的 `/workspace` 是 Laravel `backend/` 根目錄；錯誤指令使用 `/workspace/backend/app/...`，PHP 回 `Could not open input file`。正確容器路徑應為 `/workspace/app/...`、`/workspace/tests/...`，先確認 `docker exec -w /workspace eachcore-dev-php-1 pwd` 與 `test -f`。
+- **BUG-UBUNTU-B1-LINT-02（已確認指令錯誤）**：在 `( ... )` 子 Shell 中直接使用 `return 1`，Bash 回 `return: can only 'return' from a function or sourced script`，迴圈繼續，最後顯示錯誤的 `結果代碼：0`。禁止此寫法。使用明確 `fail=0` 累積錯誤，`if ...; then ...; else fail=1; fi`，最後依 fail 輸出 PASS/FAIL；不要用最後一個 `echo` 的狀態當整批測試結果。
+- 本次使用者終端回報四檔 PHP 均**未實際 lint**；`git diff --check` 沒有報錯；B1 四檔仍在工作樹。不得標示 B1 lint PASS，更不能推論 Pest PASS。
+- 任何終端命令不得關閉使用者互動式 Shell，遵守根目錄 `AGENTS.md` 第 11 節。不要重複套用 B1 Patch、不要重設 Git、不碰 iStudy。
