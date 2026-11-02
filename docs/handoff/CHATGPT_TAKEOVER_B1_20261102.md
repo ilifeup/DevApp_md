@@ -31,3 +31,11 @@
 - 已取得 B0、審查並套用 B1 F1/F3 四檔補丁於 Ubuntu 本機，PHP lint 四檔 PASS；targeted Feature **11 PASS／35 assertions／15.35s**，full Feature **165 PASS／701 assertions／49.12s**。本機 Commit 未建立，F5 不納入本輪。
 - **不要再要求使用者重複查 Docker、mount、MySQL 帳號、資料庫、密碼或 TestDatabaseGuard**。先直接重用 `docs/testing/pest_database_safety.md` 的成功命令；只有環境變動或明確失敗時才做最小檢查。
 - 本輪待辦：Git/交接收尾，之後依使用者要求在 Ubuntu 執行 reboot；未重開機前不得標記已完成。
+
+## 2026-11-02 B1 本機 Git 最終收尾
+
+- Ubuntu 本機 `master` 已成功建立 Commit **`e84ee1e`**，訊息：`fix(b1): harden offline license grace and password recovery`。
+- Git 實際回報：**4 files changed, 44 insertions(+), 1 deletion(-)**；新增 `backend/tests/Feature/B1PasswordForgotTest.php`。此前因 Git `Author identity unknown` 暫停提交，已解決；**不要重新 git add／commit、重新套補丁或重跑已通過的 Feature**。
+- B1 targeted Pest：**11 passed／35 assertions／15.35s**；完整 Feature：**165 passed／701 assertions／49.12s**；四檔 PHP lint PASS。
+- 使用者回報 Ubuntu 已 reboot。**尚未確認本機 `git status --short` 是否完全乾淨**，也尚未推送程式碼至 GitHub（本機先前無 remote）；不得宣稱遠端已同步。
+- 下一階段直接從 `e84ee1e` 接續，避免反覆環境盤查；Unit／Schema／Concurrency／Flutter／Android／E2E 仍需分別驗收。GitHub `DevApp_md` 是文件庫，不是本機程式碼庫。
