@@ -99,3 +99,11 @@
 - B1 targeted Pest：**11 passed／35 assertions／15.35s**；完整 Feature：**165 passed／701 assertions／49.12s**；四檔 PHP lint PASS。
 - 使用者回報 Ubuntu 已 reboot。**尚未確認本機 `git status --short` 是否完全乾淨**，也尚未推送程式碼至 GitHub（本機先前無 remote）；不得宣稱遠端已同步。
 - 下一階段直接從 `e84ee1e` 接續，避免反覆環境盤查；Unit／Schema／Concurrency／Flutter／Android／E2E 仍需分別驗收。GitHub `DevApp_md` 是文件庫，不是本機程式碼庫。
+
+## 13. Ubuntu reboot 後測試前置檢查（2026-11-02 實機驗證）
+
+- Ubuntu 本機兩容器 `eachcore-dev-mysql-1`、`eachcore-dev-php-1` 已設 `--restart unless-stopped`；`docker.service` 已確認 `enabled`。容器可能被人手動停止，因此測試前仍需 preflight；不要每次重建容器或重查帳號密碼。
+- MySQL 1419 舊問題重犯：本次使用 `SET PERSIST log_bin_trust_function_creators = ON`；實機回報 `log_bin_trust_function_creators=ON` 且 `log_bin=ON`。此設定是 MySQL 實例層級，不是單一 DB 權限；不授予 Pest SUPER、不移除 Trigger。
+- 本機測試統一入口：`/home/media/GitDev/ShareModules-MVP-Test/shared-test.sh tests/Schema`（其他可指定 `tests/Unit` 或 `tests/Feature`）。腳本先檢查／啟動兩個指定容器、MySQL readiness、PHP 容器解析 `mysql`、trigger 參數、Laravel 測試 DB 可達，通過才執行 Pest；保持 `APP_ENV=testing`、`DB_DATABASE=shared_pest_test`、`DB_TEST_EXPECTED_DATABASE=shared_pest_test` 與 TestDatabaseGuard。**此腳本目前在 Ubuntu 本機，不宣稱已加入程式 Git 倉庫**。
+- 本輪 Ubuntu 實測：preflight 全 PASS；Schema **91 PASS／120 assertions／19.19s**；Unit **43 PASS／99 assertions**；Feature **165 PASS／701 assertions**；合計 **299 PASS／920 assertions**。Concurrency／Flutter／Android 尚未驗收。重啟後自動啟動效果尚未經第二次 reboot 實測；勿宣稱已驗證 reboot。
+- 常見錯誤：`container ... is not running` → 先確認／啟動既有 PHP 容器；`getaddrinfo for mysql failed` → 先確認 MySQL 容器與 DNS；`SQLSTATE 1419` → 檢查持久化參數。禁止把環境連鎖失敗當作大量業務測試缺陷。
