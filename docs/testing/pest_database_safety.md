@@ -27,3 +27,10 @@ docker exec -w /workspace \
 3. Pest Unit、Schema、Feature。
 4. 安全 Guard 實際驗證後，再跑 Concurrency。
 5. 未測標 `NOT RUN`，不可把舊結果冒稱當前 PASS。
+
+## 2026-11-02 已驗證執行基準（不要重複環境盤查）
+
+- 以上四個 `-e` 變數配合 `php -d memory_limit=512M` 已成功跑 B1 targeted **11 PASS／35 assertions／15.35s**、full Feature **165 PASS／701 assertions／49.12s**。未發生 Guard 拒絕或連線錯誤。
+- 已在 Ubuntu 確認 `shared_pest_runner`@'%' 存在、`shared_pest_test` 存在、帳號權限限於該測試 DB。**實際 Pest 連線使用者尚未另行證明**，不可推定。不得為重查而更換密碼、重建帳號或修改 Docker。
+- 既有容器 Laravel root 是 `/workspace`（即宿主機 `backend/`），檔案路徑不可多加 `backend/`；終端命令不得直接使用 `exit`／子 Shell 外的 `return`。
+- 下一輪直接重用已驗證命令，僅在有實際異常或環境變更時檢查相關項目。
