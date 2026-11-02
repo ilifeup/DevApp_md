@@ -91,3 +91,11 @@
 - **已實測可用的 Pest 命令**：`docker exec -w /workspace -e APP_ENV=testing -e DB_CONNECTION=mysql -e DB_DATABASE=shared_pest_test -e DB_TEST_EXPECTED_DATABASE=shared_pest_test eachcore-dev-php-1 php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never --compact`。不得省略 DB 隔離參數或停用 TestDatabaseGuard。已核實 `shared_pest_runner` 僅有 `shared_pest_test`.* 權限；但本命令**沒有額外證明實際使用的 DB_USERNAME**，不得假稱已證實。已成功測試不代表可忽略新出現的 Guard/連線錯誤。
 - **2026-11-02 B1 實機結果**：F1/F3 PHP lint 四檔 PASS、`git diff --check` PASS、目標 Feature 11 PASS／35 assertions／15.35s、完整 Feature **165 PASS／701 assertions／49.12s**。這取代 Round11 的 162 PASS 作為最新 Feature 基準。Unit／Schema／Concurrency／Flutter／Android／E2E 未在本輪重跑，不得寫為已驗收。
 - 使用者要求本輪結束後 Ubuntu reboot：**重開機屬中斷性操作**，需先完成必要 Git/交接收尾並由使用者在 Ubuntu 主機端執行；不得在 AI 尚未完成工作時自動觸發、不得誤稱已重開機。RustDesk/其他服務可能暫時中斷。
+
+## 2026-11-02 B1 本機 Git 最終收尾
+
+- Ubuntu 本機 `master` 已成功建立 Commit **`e84ee1e`**，訊息：`fix(b1): harden offline license grace and password recovery`。
+- Git 實際回報：**4 files changed, 44 insertions(+), 1 deletion(-)**；新增 `backend/tests/Feature/B1PasswordForgotTest.php`。此前因 Git `Author identity unknown` 暫停提交，已解決；**不要重新 git add／commit、重新套補丁或重跑已通過的 Feature**。
+- B1 targeted Pest：**11 passed／35 assertions／15.35s**；完整 Feature：**165 passed／701 assertions／49.12s**；四檔 PHP lint PASS。
+- 使用者回報 Ubuntu 已 reboot。**尚未確認本機 `git status --short` 是否完全乾淨**，也尚未推送程式碼至 GitHub（本機先前無 remote）；不得宣稱遠端已同步。
+- 下一階段直接從 `e84ee1e` 接續，避免反覆環境盤查；Unit／Schema／Concurrency／Flutter／Android／E2E 仍需分別驗收。GitHub `DevApp_md` 是文件庫，不是本機程式碼庫。
