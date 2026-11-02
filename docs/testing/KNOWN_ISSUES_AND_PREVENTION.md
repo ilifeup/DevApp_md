@@ -114,3 +114,12 @@
 - 2026-11-02 使用者核准並執行 `SET PERSIST log_bin_trust_function_creators = ON`；回報 `log_bin_trust_function_creators=ON`、`log_bin=ON`。保留 audit_events append-only Trigger；不授 SUPER、不關 Binary Logging。
 - **測試前置檢查入口**：Ubuntu 本機 `/home/media/GitDev/ShareModules-MVP-Test/shared-test.sh`；先確認既有 PHP/MySQL 容器、DNS、readiness、trigger 設定與僅 `shared_pest_test` 可達，再執行 Pest。腳本未提交到程式 Git 倉庫。
 - **實機回歸**：Schema **91 PASS／120 assertions／19.19s**；此前 Feature **165 PASS／701 assertions**、Unit **43 PASS／99 assertions**。合計 **299 PASS／920 assertions**。Concurrency／Flutter／Android 未驗收；容器 restart policy 重開機效果待再次 reboot 實測。
+
+## G. 2026-11-02 Concurrency 實機回歸：3 FAIL／7 PASS（OPEN）
+
+- 執行入口：Ubuntu 本機 `shared-test.sh tests/Concurrency`；preflight 全 PASS（兩容器、MySQL readiness、DNS、trigger、專用帳號、Laravel test DB）。實際 DB `shared_pest_test`，連線 `shared_pest_runner@%`，TestDatabaseGuard PASS；專用帳號僅有測試 DB 權限。
+- Pest **10 tests：7 PASS／3 FAIL／28 assertions／28.60s**。這是實際並發測試失敗，不能歸因 Docker 或 MySQL 1419。
+- **CONC-001 OPEN**：`tests/Concurrency/BatchGRaceTest.php:45`，F04 六個同時建立衝突行程，預期僅 1 成功，實際 6 成功。查 action、時間區間、DB 鎖、交易與 fixture；不得只改 assertion。
+- **CONC-002 OPEN**：`BatchGRaceTest.php:61`，F04 兩個並發員工重疊指派，預期 1 成功，實際 2 成功。查 AssignStaff action、鎖順序、衝突檢查。
+- **CONC-003 OPEN／高風險**：`BatchGRaceTest.php:79`，BOOK 六人搶 1 席，預期 1 confirmed + 5 waitlisted，實際回傳 6 confirmed。須查實際 DB confirmed count、名額池鎖、容量判斷、booking transaction；不得放寬容量或改測試期待。
+- 下一步先唯讀追蹤 `BatchGRaceTest.php` 及其引用的 action/service，確認根因再集中修正。不要重跑已通過的 Feature 165／Unit 43／Schema 91，也不要自行宣稱整個 B1 完成。
