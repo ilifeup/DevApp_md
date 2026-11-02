@@ -68,3 +68,11 @@
 - Pest full Feature：**165 PASS／701 assertions／49.12s**；使用者提供完整結尾輸出，沒有 FAIL。舊 Round11 162 PASS／691 assertions 是歷史基準，不得再當最新 Feature 結果。測試案例數以實測 165 為準，不用預估的 164。
 - 既有 Pest 安全命令見 `docs/testing/pest_database_safety.md`。不再逐一詢問 `.env.testing` 密碼、帳號是否存在、Docker running、MySQL grants 或 PROCESSLIST；已知 `shared_pest_runner` 僅有 `shared_pest_test`.* 權限，既有容器命令已成功執行。若未來環境變更或實際報錯，才針對錯誤做必要檢查。
 - B1 並非所有驗收完成：Unit／Schema／Concurrency／Flutter／Android／E2E 本輪未重跑；F5 仍不在 B1 修改範圍。下一步先完成本輪 Git/交接收尾，再按使用者要求安排 Ubuntu reboot，不可宣稱已重啟。
+
+## 2026-11-02 B1 本機 Git 最終收尾
+
+- Ubuntu 本機 `master` 已成功建立 Commit **`e84ee1e`**，訊息：`fix(b1): harden offline license grace and password recovery`。
+- Git 實際回報：**4 files changed, 44 insertions(+), 1 deletion(-)**；新增 `backend/tests/Feature/B1PasswordForgotTest.php`。此前因 Git `Author identity unknown` 暫停提交，已解決；**不要重新 git add／commit、重新套補丁或重跑已通過的 Feature**。
+- B1 targeted Pest：**11 passed／35 assertions／15.35s**；完整 Feature：**165 passed／701 assertions／49.12s**；四檔 PHP lint PASS。
+- 使用者回報 Ubuntu 已 reboot。**尚未確認本機 `git status --short` 是否完全乾淨**，也尚未推送程式碼至 GitHub（本機先前無 remote）；不得宣稱遠端已同步。
+- 下一階段直接從 `e84ee1e` 接續，避免反覆環境盤查；Unit／Schema／Concurrency／Flutter／Android／E2E 仍需分別驗收。GitHub `DevApp_md` 是文件庫，不是本機程式碼庫。
