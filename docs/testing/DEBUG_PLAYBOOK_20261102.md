@@ -60,3 +60,11 @@
 - **BUG-UBUNTU-B1-LINT-02（已確認指令錯誤）**：在 `( ... )` 子 Shell 中直接使用 `return 1`，Bash 回 `return: can only 'return' from a function or sourced script`，迴圈繼續，最後顯示錯誤的 `結果代碼：0`。禁止此寫法。使用明確 `fail=0` 累積錯誤，`if ...; then ...; else fail=1; fi`，最後依 fail 輸出 PASS/FAIL；不要用最後一個 `echo` 的狀態當整批測試結果。
 - 本次使用者終端回報四檔 PHP 均**未實際 lint**；`git diff --check` 沒有報錯；B1 四檔仍在工作樹。不得標示 B1 lint PASS，更不能推論 Pest PASS。
 - 任何終端命令不得關閉使用者互動式 Shell，遵守根目錄 `AGENTS.md` 第 11 節。不要重複套用 B1 Patch、不要重設 Git、不碰 iStudy。
+
+## 2026-11-02 B1 F1/F3 實機驗收與重複檢查禁止規則
+
+- B1 四檔已在 Ubuntu 本機套用（尚未確認建立本機 Commit）；PHP lint 四檔 PASS，`git diff --check` PASS。此前錯誤指令造成的 lint「未執行」狀態已由後續正確實測取代。
+- Pest targeted：`B1PasswordForgotTest.php` + `MediaCenterTest.php`，**11 PASS／35 assertions／15.35s**。
+- Pest full Feature：**165 PASS／701 assertions／49.12s**；使用者提供完整結尾輸出，沒有 FAIL。舊 Round11 162 PASS／691 assertions 是歷史基準，不得再當最新 Feature 結果。測試案例數以實測 165 為準，不用預估的 164。
+- 既有 Pest 安全命令見 `docs/testing/pest_database_safety.md`。不再逐一詢問 `.env.testing` 密碼、帳號是否存在、Docker running、MySQL grants 或 PROCESSLIST；已知 `shared_pest_runner` 僅有 `shared_pest_test`.* 權限，既有容器命令已成功執行。若未來環境變更或實際報錯，才針對錯誤做必要檢查。
+- B1 並非所有驗收完成：Unit／Schema／Concurrency／Flutter／Android／E2E 本輪未重跑；F5 仍不在 B1 修改範圍。下一步先完成本輪 Git/交接收尾，再按使用者要求安排 Ubuntu reboot，不可宣稱已重啟。
