@@ -128,3 +128,16 @@ r7.2 原始 HTML 的「技術與架構」「核心流程」「資料庫」「核
 - [**Shared Modules／App-T／App-W／App-EC：五個邏輯儲存庫、文件目錄、Ubuntu 工作樹及分階段遷移方案**](docs/architecture/REPOSITORIES_AND_APP_BOUNDARIES_20261102.md)。
 - **DevApp_md 僅管理需求、決策、證據與索引；共用程式單一來源，三 App 各自部署／DB／Filament**。現有 Round11 ZIP 工作樹先保存快照、驗證 Git 基線，不能直接視為已同步至舊 PoC 或其他 GitHub repo。
 - 本節是文件組織與遷移提案；**未建立或搬移任何程式儲存庫**，也不變更已核准 47 模組（P0 33／P1 10／P2 4）及既有 API／DB 契約。前述 45／46 模組敘述均屬歷史節點。
+
+## 14. 2026-11-02 B1、Booking 並發修正與最新驗收基線
+
+- [B1 F1／F3 本機 Git 修補與 Feature 回歸](docs/testing/B1_F1_F3_LOCAL_VERIFICATION_20261102.md)：本機 Commit `e84ee1e`；目標 11 PASS／35 assertions、完整 Feature 165 PASS／701 assertions。這是歷史 B1 驗收證據，不代表 GitHub 程式碼已 Push。
+- [Booking 防超賣架構研究與並發修正](docs/architecture/BOOKING_CONCURRENCY_RESEARCH_20261102.md)：本機 Commit `264ff1f`；CONC-001～003 本機修正，Concurrency 連續三輪各 10 PASS；Feature 165、Unit 43、Schema 91 PASS；合計不同案例 309 PASS／951 assertions／0 FAIL。已知問題詳見 [防重犯紀錄](docs/testing/KNOWN_ISSUES_AND_PREVENTION.md)。
+- 以上是**本機後端測試證據**；不代表 Flutter、Android、三 App 整合、正式部署已完成。DevApp_md 僅為文件庫，程式 Commit 尚未 Push。
+
+## 15. 新增長期 P0：OPS-01 管理員環境檢測與開發診斷
+
+- 使用者 2026-11-02 明確要求新增長期 P0；[OPS-01 正式需求方向](modules/OPS-01.md)。目標是讓 Ubuntu／Laravel Cloud／其他 Web 環境的診斷與開發交接可重用，減少反覆查環境。
+- **規劃總數更新為 48 個模組（原 47 + OPS-01）；P0 34／P1 10／P2 4**。舊章節 45／46／47 為歷史版本，不可當作最新總數；正式進度表與各模組卡的對照仍待下一輪整合。
+- MVP 僅做 Laravel PHP／Filament Super 唯讀診斷、能力感知環境檢查、遮罩化複製報告；Ubuntu 專屬檢查沿用既有 `shared-test.sh` 證據，**不由 Web 執行任意 Shell**。Python／Agent／一鍵修復不是本階段必要功能。
+- 狀態：**需求新增，未實作／未驗收**。不得為新增模組而打斷已完成後端驗收或擅自部署。
