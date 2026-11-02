@@ -74,3 +74,9 @@
 - Do not put the forbidden Chinese strings into CI logs, issue titles, pull requests, commit messages, or GitHub search reports. When reporting findings, use generic labels such as `restricted-term-1/2/3` and file paths only.
 - This policy applies to **future repository content and current branch cleanup**. Removing strings from current files does **not** erase past Git history, forks, clones, caches, or previously published artifacts. History rewrite is a separate destructive operation and requires explicit approval.
 - A search of the default branch alone does not prove all branches are clean. Check target branches separately and state any scan limitations.
+
+## 11. AI 沙盒優先相容性關卡（2026-11-02 核准）
+
+- **先檢查 AI 沙盒與目標主機實際可用的語言、DB 驅動、服務、網路與權限，完成最小跨程序 PoC，才核定技術棧並開始主要功能開發。** 套件來源遭封鎖不得反覆安裝；不可將 lint/mock 當成 DB/E2E 驗收。
+- DB 選型逐專案決策：優先選沙盒可直接測試且正式主機也安全可用的技術，不強制全部改 SQLite。重大架構契約變更仍依 C 模式核准。
+- 本次 Ubuntu Admin WebApp SQLite＋WAL 案例及實測證據限制見 [沙盒優先原則](docs/AI_SANDBOX_FIRST_COMPATIBILITY.md) 與 [個案決策](docs/Ubuntu_Admin_WebApp_SQLite_WAL_2026-11-02.md)；**不改 Shared Modules V1 已核准的資料庫架構。**
