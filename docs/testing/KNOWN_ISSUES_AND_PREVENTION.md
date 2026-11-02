@@ -97,3 +97,20 @@
 - **[DEBUG_PLAYBOOK_20261102.md](DEBUG_PLAYBOOK_20261102.md)**：22 類症狀→根因→正確處理→禁止捷徑，涵蓋 Round1–11、Push MySQL 同秒租約更新、Woo 分頁、Page Atlas 隱含提交、媒體 OOM、測試 fixture 與 TestDatabaseGuard。
 - **[UBUNTU_MVP_VERIFIED_20261102.md](../environment/UBUNTU_MVP_VERIFIED_20261102.md)**：已驗證環境、容器／DB、備份與回歸命令。
 - **最新 Feature 實測 162 PASS／0 FAIL、691 assertions、46.70 秒**（Round11）。本檔早期 OPEN/VERIFY 條目是歷史排查紀錄，遇到同名問題時先查上述新索引和 Ubuntu 目前程式，不能直接當成仍失敗。Feature 全綠不代表 Concurrency／Flutter／外部整合／正式部署已驗收；不因綠燈自動結案。
+
+## F. 2026-11-02 重啟後重犯問題與已驗證預防（最新）
+
+### BUG-010｜Ubuntu reboot 後 PHP 容器未運行 — FIXED（restart policy 已設，重開機效果待實測）
+- 症狀：`container ... is not running`，Unit/Schema 當次未執行，不是測試斷言失敗。
+- 處理：既有 `eachcore-dev-php-1` 啟動成功；兩容器均設定 `unless-stopped`；`docker.service` 顯示 `enabled`。禁止重建或重裝。
+
+### BUG-011｜MySQL 未啟動，PHP 無法解析 mysql — FIXED（本輪 preflight PASS）
+- 症狀：Schema 91 個案例皆報 `php_network_getaddresses: getaddrinfo for mysql failed`。
+- 處理：啟動既有 `eachcore-dev-mysql-1`；本機 `shared-test.sh` 已驗證 MySQL readiness、PHP DNS 與 Laravel 測試 DB 連線全部 PASS。
+- 不得將同一環境錯誤誤報為 91 個 Schema 程式缺陷。
+
+### BUG-003 復發｜MySQL 1419 Trigger 建立失敗 — FIXED（持久化設定已驗證）
+- 症狀：Migration `2026_11_02_000012_protect_audit_events.php` 建立 `trg_audit_events_no_update` 時，MySQL Binary Logging 開啟且一般帳號無 SUPER。
+- 2026-11-02 使用者核准並執行 `SET PERSIST log_bin_trust_function_creators = ON`；回報 `log_bin_trust_function_creators=ON`、`log_bin=ON`。保留 audit_events append-only Trigger；不授 SUPER、不關 Binary Logging。
+- **測試前置檢查入口**：Ubuntu 本機 `/home/media/GitDev/ShareModules-MVP-Test/shared-test.sh`；先確認既有 PHP/MySQL 容器、DNS、readiness、trigger 設定與僅 `shared_pest_test` 可達，再執行 Pest。腳本未提交到程式 Git 倉庫。
+- **實機回歸**：Schema **91 PASS／120 assertions／19.19s**；此前 Feature **165 PASS／701 assertions**、Unit **43 PASS／99 assertions**。合計 **299 PASS／920 assertions**。Concurrency／Flutter／Android 未驗收；容器 restart policy 重開機效果待再次 reboot 實測。
