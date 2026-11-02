@@ -24,3 +24,11 @@
 - F5 仍為 P1 待驗證；F2/F4/F6–F9 不擴大。
 - 郵件寄送失敗後 OTP 可能已持久化，屬既有流程；本輪未改 OTP schema、Outbox 或排程。
 - 發現失敗須保留原始證據，集中修正後才建議一次本機 Commit。
+
+## B1 2026-11-02 Ubuntu 實機驗收更新（取代上述「尚未套用／未測」歷史狀態）
+
+- 補丁已套用本機 `e20b294` 工作樹；四檔 PHP lint PASS、Git diff check PASS；**本機 Commit 尚未建立**。
+- 目標 Pest：**11 PASS／35 assertions／15.35s**。
+- 完整 Feature：**165 PASS／701 assertions／49.12s**；原 Round11 162 PASS 為歷史基準。
+- 測試沿用 `docs/testing/pest_database_safety.md` 指令與 `shared_pest_test` Guard，不重查已知環境。Unit／Schema／Concurrency／Flutter／Android／E2E 本輪未重跑；F5 不修改。
+- 使用者要求本輪收尾後 Ubuntu reboot；截至本紀錄**未執行重開機**。不得因 Feature 全綠而自動聲稱完整部署驗收。
