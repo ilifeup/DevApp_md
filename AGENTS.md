@@ -72,3 +72,14 @@
 - Before commit, scan all tracked files and filenames with Unicode NFC normalization; redact prohibited names without changing API/DB contracts. If contract changes are required, stop and seek approval.
 - Do not expose the original restricted terms in scan logs. Removing current text does not erase Git history, caches, forks or clones; rewriting history requires separate approval.
 - Default branch code search cannot prove other branches clean; verify each target branch separately.
+
+## 11. Ubuntu 終端機指令安全規則（2026-11-02，使用者核准）
+
+**所有提供給使用者直接貼入 Ubuntu 終端機的指令，均不得意外結束目前 Shell 或關閉終端機視窗。** 適用於 ChatGPT、Claude 及後續 AI；這是操作安全要求，不變更業務規格。
+
+1. **禁止在直接貼入互動式終端機的指令區塊使用 `exit`、`logout`、`exec` 或 `kill` 目前 Shell 的方式**，包含 `cd ... || exit 1`、`command || exit`、`set -e` 導致終端中止的組合。不得把 `exit 1` 當作通用錯誤處理。
+2. 需要「失敗就停止後續步驟」時，優先使用 `if ...; then ...; else ...; fi`、`&&` 或在**獨立子 Shell**中執行有明確邊界的腳本；不得使呼叫者的互動 Shell 退出。若使用子 Shell，需明確標示其失敗只會結束子程序。
+3. 預設先給唯讀檢查，再給修改指令；會修改程式、DB、Git 或系統服務時須有明確授權。執行完應輸出狀態碼與錯誤訊息，保留終端供使用者複製結果。避免大量輸出及秘密洩漏。
+4. Patch 必須先檢查是否已套用：`git apply --reverse --check PATCH` 成功代表已套用，**不得重複套用**；`git apply --check PATCH` 只在尚未套用時檢查相容性。使用者已確認 B1 F1/F3 四檔出現，無需再套一次。
+5. 不要求為語法檢查額外安裝 PHP：Ubuntu 宿主機過去沒有 PHP CLI，應先確認現有執行環境，必要時只使用已存在的 PHP 容器作**非破壞性 lint**；不因 lint 而修改 Docker Compose、服務或 iStudy。
+6. 任何指令出錯時，先保存現況、回報錯誤，再提出下一個最小安全步驟；不得用重設、還原或重套補丁掩蓋錯誤。這項規則須寫入交接與 Debug 防重犯文件。
