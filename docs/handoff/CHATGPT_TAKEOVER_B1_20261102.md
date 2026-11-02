@@ -25,3 +25,9 @@
 
 ## 未完成的下一個具體任務
 取得 `e20b294` 本機程式快照（敏感檔排除）後，**只讀**完成 47 模組整體進度盤點與 B1 F1/F3/F5 精確修改範圍報告；使用者批准之前不修改程式。
+
+## 2026-11-02 最新接手狀態（優先於上方歷史待辦）
+
+- 已取得 B0、審查並套用 B1 F1/F3 四檔補丁於 Ubuntu 本機，PHP lint 四檔 PASS；targeted Feature **11 PASS／35 assertions／15.35s**，full Feature **165 PASS／701 assertions／49.12s**。本機 Commit 未建立，F5 不納入本輪。
+- **不要再要求使用者重複查 Docker、mount、MySQL 帳號、資料庫、密碼或 TestDatabaseGuard**。先直接重用 `docs/testing/pest_database_safety.md` 的成功命令；只有環境變動或明確失敗時才做最小檢查。
+- 本輪待辦：Git/交接收尾，之後依使用者要求在 Ubuntu 執行 reboot；未重開機前不得標記已完成。
