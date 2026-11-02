@@ -83,3 +83,11 @@
 4. Patch 必須先檢查是否已套用：`git apply --reverse --check PATCH` 成功代表已套用，**不得重複套用**；`git apply --check PATCH` 只在尚未套用時檢查相容性。使用者已確認 B1 F1/F3 四檔出現，無需再套一次。
 5. 不要求為語法檢查額外安裝 PHP：Ubuntu 宿主機過去沒有 PHP CLI，應先確認現有執行環境，必要時只使用已存在的 PHP 容器作**非破壞性 lint**；不因 lint 而修改 Docker Compose、服務或 iStudy。
 6. 任何指令出錯時，先保存現況、回報錯誤，再提出下一個最小安全步驟；不得用重設、還原或重套補丁掩蓋錯誤。這項規則須寫入交接與 Debug 防重犯文件。
+
+## 12. Ubuntu 已驗證環境優先重用、禁止重複盤查（2026-11-02，使用者明確要求）
+
+- **任何 AI 接手或進入下一批測試時，先讀本檔、`docs/testing/pest_database_safety.md`、`docs/testing/DEBUG_PLAYBOOK_20261102.md`、`docs/handoff/ubuntu_mvp_debug_20261101.md` 及最新 B1 驗收紀錄**。已確認的 Ubuntu 路徑、Docker mount、容器、資料庫與 Guard 不得每次重新詢問或逐項重測；僅在有具體變更、失敗證據或新的高風險操作時做最小必要檢查。
+- **既有可用環境**：宿主機專案 `/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1`；PHP 容器 `eachcore-dev-php-1`，Laravel 根目錄 `/workspace` 對應宿主機 `backend/`；MySQL 容器 `eachcore-dev-mysql-1`。主機不必另裝 PHP、Composer、Pest；不重建 Docker 或安裝不必要套件。
+- **已實測可用的 Pest 命令**：`docker exec -w /workspace -e APP_ENV=testing -e DB_CONNECTION=mysql -e DB_DATABASE=shared_pest_test -e DB_TEST_EXPECTED_DATABASE=shared_pest_test eachcore-dev-php-1 php -d memory_limit=512M ./vendor/bin/pest tests/Feature --colors=never --compact`。不得省略 DB 隔離參數或停用 TestDatabaseGuard。已核實 `shared_pest_runner` 僅有 `shared_pest_test`.* 權限；但本命令**沒有額外證明實際使用的 DB_USERNAME**，不得假稱已證實。已成功測試不代表可忽略新出現的 Guard/連線錯誤。
+- **2026-11-02 B1 實機結果**：F1/F3 PHP lint 四檔 PASS、`git diff --check` PASS、目標 Feature 11 PASS／35 assertions／15.35s、完整 Feature **165 PASS／701 assertions／49.12s**。這取代 Round11 的 162 PASS 作為最新 Feature 基準。Unit／Schema／Concurrency／Flutter／Android／E2E 未在本輪重跑，不得寫為已驗收。
+- 使用者要求本輪結束後 Ubuntu reboot：**重開機屬中斷性操作**，需先完成必要 Git/交接收尾並由使用者在 Ubuntu 主機端執行；不得在 AI 尚未完成工作時自動觸發、不得誤稱已重開機。RustDesk/其他服務可能暫時中斷。
