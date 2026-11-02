@@ -123,3 +123,14 @@
 - **CONC-002 OPEN**：`BatchGRaceTest.php:61`，F04 兩個並發員工重疊指派，預期 1 成功，實際 2 成功。查 AssignStaff action、鎖順序、衝突檢查。
 - **CONC-003 OPEN／高風險**：`BatchGRaceTest.php:79`，BOOK 六人搶 1 席，預期 1 confirmed + 5 waitlisted，實際回傳 6 confirmed。須查實際 DB confirmed count、名額池鎖、容量判斷、booking transaction；不得放寬容量或改測試期待。
 - 下一步先唯讀追蹤 `BatchGRaceTest.php` 及其引用的 action/service，確認根因再集中修正。不要重跑已通過的 Feature 165／Unit 43／Schema 91，也不要自行宣稱整個 B1 完成。
+
+## H. 2026-11-02 Concurrency 修正與本機驗收（最新；取代 G 節 OPEN 狀態）
+
+- **CONC-001／002／003：FIXED（Ubuntu 本機測試驗收）**。G 節的 3 FAIL／7 PASS 是修正前歷史證據，**不代表目前仍 OPEN**。
+- 本機 Git 工作區：`/home/media/GitDev/ShareModules-MVP-Test/Shared_Modules_V1/backend`；分支 `master`；**本機 Commit `264ff1f`**（`fix(concurrency): prevent resource conflicts and booking overselling`），工作目錄乾淨。此 Commit **尚未 Push**，不可把文件更新誤當程式已同步 GitHub。
+- **根因判斷**：資源／活動固定列取得排他鎖後，衝突檢查與容量計算使用一般一致性讀取，可能沿用 InnoDB 交易舊快照；本次修正後並發測試通過。此為依程式及結果判斷的根因，尚未以獨立交易快照追蹤證實所有執行路徑。
+- **程式修正**：`app/Services/ResourceConflicts.php` 的教室與員工衝突查詢加入 `lockForUpdate()`；`app/Services/Capacity.php` 的 confirmed、effective makeups、waitlisted、waitlist sequence 五處改為鎖定讀取明細再計算；原篩選條件保留。未改 Migration、LockScope 或 TransactionRunner。
+- **測試修正**：`tests/Concurrency/BatchGRaceTest.php` 將並發結果陣列順序敏感的 `toBe()` 改為 `toEqualCanonicalizing()`，保留 `1 confirmed + 5 waitlisted` 的實際數量要求。
+- **Ubuntu 實機證據**：Concurrency 連續三輪各 **10 PASS／31 assertions**；Feature **165 PASS／701 assertions**；Unit **43 PASS／99 assertions**；Schema **91 PASS／120 assertions**。不同案例合計 **309 PASS／951 assertions／0 FAIL**。Preflight 的容器、DNS、MySQL、專用 Pest 帳號、測試 DB 隔離皆 PASS。
+- **安全規則**：Pest 僅走既有 `shared-test.sh`，不得碰正式 DB；不可為通過測試放寬容量、關閉鎖或修改業務預期。當前已驗證本機修正，**不等於 GitHub 程式已同步、Flutter／Android／外部整合或整個 MVP 已正式驗收**。
+- **後續監控**：鎖定讀取可能增加範圍鎖／死鎖與效能成本；未來新增預約路徑、取消遞補、補課或大量並發時，需回歸容量與衝突測試，若有 lock timeout／deadlock 先檢查固定列鎖順序及查詢計畫，不能盲目取消鎖。
