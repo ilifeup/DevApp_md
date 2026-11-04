@@ -80,3 +80,15 @@
 - **先檢查 AI 沙盒與目標主機實際可用的語言、DB 驅動、服務、網路與權限，完成最小跨程序 PoC，才核定技術棧並開始主要功能開發。** 套件來源遭封鎖不得反覆安裝；不可將 lint/mock 當成 DB/E2E 驗收。
 - DB 選型逐專案決策：優先選沙盒可直接測試且正式主機也安全可用的技術，不強制全部改 SQLite。重大架構契約變更仍依 C 模式核准。
 - 本次 Ubuntu Admin WebApp SQLite＋WAL 案例及實測證據限制見 [沙盒優先原則](docs/AI_SANDBOX_FIRST_COMPATIBILITY.md) 與 [個案決策](docs/Ubuntu_Admin_WebApp_SQLite_WAL_2026-11-02.md)；**不改 Shared Modules V1 已核准的資料庫架構。**
+
+## 12. AI 雲端開發／Ubuntu 正式組譯分離（2026-11-04，使用者核准）
+
+**正式採用 C 混合方案**。本節約束 Claude、ChatGPT 及其他 AI，適用所有專案的交付方法；各專案實際建置平台仍依其規格。詳見 [跨專案原始碼／發行成品分離規範](docs/AI_SOURCE_VS_RELEASE_PACKAGING_2026-11-04.md)。
+
+1. **雲端 AI 以開發、修改、程式審查、必要的型別／語法／單元／隔離測試及精簡原始碼交付為主**。日常交接**不得無需求地下載整套 Electron／Chromium、建置 `.deb`／Windows installer，再把巨大產物混入原始碼 ZIP**。不得為追求小 ZIP 而省略必要的品質檢查。
+2. **原始碼 ZIP 與正式安裝成品分開**：原始碼 ZIP 排除 `dist/`、`node_modules/`、`build/`、安裝包、快取、log、測試暫存、機密、正式資料、備份；必須保留全部核心程式、資料庫 Schema／migrations、API、Agent、Client、Server、測試、部署及建置腳本、設定、必要離線依賴。按實際專案路徑判斷，不可機械排除必要檔案。
+3. **Ubuntu 實機優先做 Linux 正式編譯、`.deb`／Linux Client 封裝及完整整合驗收**；Windows Client 原生安裝檔在 Windows／核准 CI Runner 製作。GitHub Actions 可於**明確發行或驗證需要**時建置成品，並非禁止雲端 build／CI。
+4. 正式安裝包、Docker 映像及 Client installer **另外交付**，標示來源 Commit／ZIP 快照、版本、平台、SHA-256、必要依賴、驗收證據與回退方法。原始碼 ZIP 應附檔案清單、排除清單、SHA-256、必留項核對及「已測／未測」。
+5. **iSTUDY 案例**：Dev62 約 102 MB 的 ZIP 內含約 92.32 MB Electron Server App `.deb`；Dev63 精簡 ZIP 約 8.99 MB。197 個共同檔案 SHA-256 相同、4 個同路徑異動、14 個僅 Dev62（均 `dist/`）、36 個僅 Dev63。**這是兩份 ZIP 的靜態盤點，不是 Ubuntu 實機驗收**。必要離線 `deploy/vendor/age` 必須保留；`.deb` 是管理 GUI，**排除安裝包不等於刪除 Server App 原始碼／功能**。
+6. 禁止將開發階段未驗收的成品誤標為正式發布；**CI PASS 不等於實機 PASS**。若部署腳本要求 `dist/*.deb`，應在 Ubuntu 正式部署前先建相符版本，不得用舊版套件冒充新版。
+7. **本儲存庫 A 階段仍只處理 Markdown**：本規範不授權在 DevApp_md 執行程式編譯、修改別的專案、部署、改 CI、操作正式 DB 或自動合併 PR。架構變更仍依第 3 節 C 模式另行核准。
